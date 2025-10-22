@@ -1,3 +1,33 @@
+<?php 
+session_start();
+require_once 'cn.php';
+
+// Si el formulario fue enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $conexion = new cn();
+    $con = $conexion->getCon();
+
+    $usuario = $con->real_escape_string($_POST['usuario']);
+    $password = $con->real_escape_string($_POST['password']);
+
+    // Consulta del docente con usuario y contraseña
+    $sql = "SELECT * FROM docente WHERE nom_usuario = '$usuario' AND ape_usuario = '$password'";
+    $result = $con->query($sql);
+
+    if ($result && $result->num_rows > 0) {
+        $docente = $result->fetch_assoc();
+        $_SESSION['id_docente'] = $docente['id_docente'];
+        $_SESSION['nombre'] = $docente['nom_usuario'];
+        $_SESSION['apellido'] = $docente['ape_usuario'];
+
+        // Redirigir al docente
+        header("Location: vistaDocente.php");
+        exit();
+    } else {
+        $error = "Usuario o contraseña incorrectos.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,7 +35,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Inicio de sesión</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
   <style>
     body {
       background-color: #f5f5f5;
@@ -19,17 +48,6 @@
       max-width: 400px;
       margin: 5% auto;
     }
-    .status-badge {
-      display: inline-block;
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-    .status-green { background-color: #d4edda; color: #155724; }
-    .status-yellow { background-color: #fff3cd; color: #856404; }
-    .status-red { background-color: #f8d7da; color: #721c24; }
-
     .btn-login {
       background-color: #0d6efd;
       color: white;
@@ -47,22 +65,23 @@
   <div class="login-card text-center">
     <h4 class="mb-3">Inicio de sesión para Docentes</h4>
 
+    <?php if (!empty($error)): ?>
+      <div class="alert alert-danger"><?= $error ?></div>
+    <?php endif; ?>
 
-    <form>
+    <form method="post" action="">
       <div class="mb-3 text-start">
         <label for="usuario" class="form-label">Usuario</label>
-        <input type="text" class="form-control" id="usuario" placeholder="Ingresa tu usuario">
+        <input type="text" class="form-control" name="usuario" id="usuario" required>
       </div>
 
       <div class="mb-3 text-start">
         <label for="password" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="password" placeholder="password">
+        <input type="password" class="form-control" name="password" id="password" required>
       </div>
 
       <button type="submit" class="btn btn-login w-100 mt-2">Ingresar</button>
     </form>
-
-    
   </div>
 
 </body>

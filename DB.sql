@@ -10,7 +10,7 @@ CREATE TABLE alumno (
 
 -- Tabla: detalle
 
---ESTA TABLA CONTIENE INFORMACION PERO SOLO LA UEDO VER EN ITCA-FEPADE
+
 CREATE TABLE detalle (
     id_detalle INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     id_d INT(10) NULL,
@@ -37,5 +37,6 @@ CREATE TABLE detalle (
 CREATE TABLE docente (
     id_docente INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nom_usuario VARCHAR(50) NULL,
-    ape_usuario VARCHAR(50) NULL
+    ape_usuario VARCHAR(50) NULL,
+    passbreve VARCHAR(20) NULL,
 );
