@@ -1,6 +1,6 @@
 <?php 
 session_start();
-require_once 'cn.php';
+require_once 'config/cn.php';
 
 // Si el formulario fue enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

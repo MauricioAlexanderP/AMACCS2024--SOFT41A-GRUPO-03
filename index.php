@@ -32,7 +32,7 @@
 
 <div class="header">
     <h1>Disponibilidad de Docentes</h1>
-    <img src="logo.png" alt="Logo de la empresa">
+    <img src="img/logo.png" alt="Logo de la empresa">
 </div>
 
 <div class="grid">
