@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Consulta del docente con usuario y contraseña
     $sql = "SELECT * FROM docente WHERE nom_usuario = '$usuario' AND ape_usuario = '$password'";
+
     $result = $con->query($sql);
 
     if ($result && $result->num_rows > 0) {
@@ -21,9 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['apellido'] = $docente['ape_usuario'];
 
         // Redirigir al docente
-        header("Location: vistaDocente.php");
+        if ($docente['nom_usuario'] == 'kiosko' && $docente['ape_usuario'] == 'itcaSA') {
+            header("Location: views/solicitarconsulta.php");
+            exit();
+        }
+        else{
+        header("Location: views/vistaDocente.php");
         exit();
-    } else {
+        }
+  
+    }
+     else {
         $error = "Usuario o contraseña incorrectos.";
     }
 }
