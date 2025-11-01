@@ -1,3 +1,362 @@
+<?php
+/**
+ * Función para generar las tarjetas de docentes desde el JSON
+ * Lee config/detalles.json y agrupa los datos por docente
+ */
+function generarVistasDocentes() {
+    $jsonPath = __DIR__ . '/../config/detalles.json';
+    
+    if (!file_exists($jsonPath)) {
+        return '<div class="alert alert-danger">No se encontró el archivo de configuración.</div>';
+    }
+    
+    $jsonContent = file_get_contents($jsonPath);
+    $detalles = json_decode($jsonContent, true);
+    
+    if (empty($detalles)) {
+        return '<div class="alert alert-warning">No hay datos de docentes disponibles.</div>';
+    }
+    
+    // Agrupar datos por docente
+    $docentes = agruparPorDocente($detalles);
+    
+    // Generar HTML
+    $html = '<div class="container py-5">';
+    $html .= '<h3 class="mb-4 text-center">Disponibilidad de Docentes</h3>';
+    $html .= '<br>';
+    $html .= '<a href="logout.php" class="btn btn-danger mb-4">Cerrar Sesión</a>';
+    $html .= '<div class="row justify-content-center g-4">';
+    
+    $contador = 1;
+    foreach ($docentes as $nombreCompleto => $datos) {
+        $html .= generarTarjetaDocente($nombreCompleto, $datos, $contador);
+        $contador++;
+    }
+    
+    $html .= '</div></div>';
+    $html .= generarModales($docentes);
+    
+    return $html;
+}
+
+/**
+ * Agrupa los detalles por nombre de docente
+ */
+function agruparPorDocente($detalles) {
+    $docentes = [];
+    
+    foreach ($detalles as $detalle) {
+        $nombreCompleto = $detalle['nombre_docente'] . ' ' . $detalle['apellido_docente'];
+        
+        if (!isset($docentes[$nombreCompleto])) {
+            $docentes[$nombreCompleto] = [];
+        }
+        
+        $docentes[$nombreCompleto][] = $detalle;
+    }
+    
+    return $docentes;
+}
+
+/**
+ * Genera una tarjeta individual de docente
+ */
+function generarTarjetaDocente($nombreCompleto, $detalles, $id) {
+    $primerDetalle = $detalles[0];
+    $imagen = 'https://picsum.photos/400/200?random=' . $id;
+    
+    // Obtener el estado del JSON
+    $estado = $primerDetalle['estado_disponibilidad'] ?? 'disponible';
+    $notas = $primerDetalle['notas_disponibilidad'] ?? '';
+    
+    // Mapear estado a clase de badge
+    $estadoClases = [
+        'disponible' => 'status-green',
+        'ocupado' => 'status-red',
+        'revisando' => 'status-yellow',
+        'reunion' => 'status-yellow',
+        'laboratorio' => 'status-yellow',
+        'almuerzo' => 'status-orange'
+    ];
+    
+    $estadoEtiquetas = [
+        'disponible' => 'Disponible',
+        'ocupado' => 'Atendiendo estudiante',
+        'revisando' => 'Revisando tareas',
+        'reunion' => 'En reunión',
+        'laboratorio' => 'En laboratorio',
+        'almuerzo' => 'En almuerzo'
+    ];
+    
+    $estadoClase = $estadoClases[$estado] ?? 'status-green';
+    $estadoEtiqueta = $estadoEtiquetas[$estado] ?? 'Disponible';
+    
+    $html = '<div class="col-md-4 col-sm-6">';
+    $html .= '<div class="docente-card">';
+    $html .= '<img src="' . htmlspecialchars($imagen) . '" alt="Docente" class="docente-img">';
+    $html .= '<div class="docente-body">';
+    $html .= '<p class="docente-nombre">' . htmlspecialchars($nombreCompleto) . '</p>';
+    $html .= '<p class="docente-area">Área: ' . htmlspecialchars($primerDetalle['aula']) . '</p>';
+    $html .= '<span class="status-badge ' . $estadoClase . '">' . $estadoEtiqueta . '</span>';
+    
+    if (!empty($notas)) {
+        $html .= '<p class="docente-notas" style="font-size: 0.85rem; color: #666; margin-top: 8px;"><em>' . htmlspecialchars($notas) . '</em></p>';
+    }
+    
+    $html .= '<div class="mt-3 botones-group">';
+    $html .= '<button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal' . $id . '">Editar Disponibilidad</button>';
+    $html .= '<button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal' . $id . '">Ver Horario</button>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Genera todos los modales (edición y horarios)
+ */
+function generarModales($docentes) {
+    $html = '';
+    $id = 1;
+    
+    foreach ($docentes as $nombreCompleto => $detalles) {
+        $html .= generarModalEditar($nombreCompleto, $detalles, $id);
+        $html .= generarModalHorario($nombreCompleto, $detalles, $id);
+        $id++;
+    }
+    
+    return $html;
+}
+
+/**
+ * Genera el modal de edición de disponibilidad
+ */
+function generarModalEditar($nombreCompleto, $detalles, $id) {
+    $html = '<!-- Modal Editar ' . $id . ' -->';
+    $html .= '<div class="modal fade" id="editarModal' . $id . '" tabindex="-1" aria-hidden="true">';
+    $html .= '<div class="modal-dialog modal-dialog-centered">';
+    $html .= '<div class="modal-content">';
+    $html .= '<div class="modal-header editar">';
+    $html .= '<h5 class="modal-title">Editar Disponibilidad - ' . htmlspecialchars($nombreCompleto) . '</h5>';
+    $html .= '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>';
+    $html .= '</div>';
+    $html .= '<div class="modal-body">';
+    $html .= '<form action="actualizar_disponibilidad.php" method="POST">';
+    $html .= '<input type="hidden" name="docente_id" value="' . $id . '">';
+    $html .= '<input type="hidden" name="nombre_docente" value="' . htmlspecialchars($nombreCompleto) . '">';
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="estado' . $id . '" class="form-label">Estado de Disponibilidad:</label>';
+    $html .= '<select class="form-select" id="estado' . $id . '" name="estado" required>';
+    $html .= '<option value="disponible" selected>Disponible</option>';
+    $html .= '<option value="ocupado">Atendiendo estudiante</option>';
+    $html .= '<option value="revisando">Revisando tareas</option>';
+    $html .= '<option value="reunion">En reunión</option>';
+    $html .= '<option value="laboratorio">En laboratorio</option>';
+    $html .= '<option value="almuerzo">En almuerzo</option>';
+    $html .= '</select>';
+    $html .= '</div>';
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="notas' . $id . '" class="form-label">Notas adicionales (opcional):</label>';
+    $html .= '<textarea class="form-control" id="notas' . $id . '" name="notas" rows="3" placeholder="Ej: Regreso en 15 minutos"></textarea>';
+    $html .= '</div>';
+    $html .= '<div class="d-flex justify-content-end gap-2">';
+    $html .= '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>';
+    $html .= '<button type="submit" class="btn btn-success">Guardar Cambios</button>';
+    $html .= '</div>';
+    $html .= '</form>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Genera el horario semanal completo (7:00 a 16:20)
+ * Con recesos: 8:40-9:00 y 12:20-13:00
+ */
+function generarHorarioSemanal($detalles) {
+    $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+    $horarios = [];
+    
+    // Bloques de horarios: antes del primer receso, después del primer receso, después del segundo receso
+    $bloque1 = ['07:00', '07:50', '08:40']; // Termina a las 8:40
+    $bloque2 = ['09:00', '09:50', '10:40', '11:30', '12:20']; // Termina a las 12:20
+    $bloque3 = ['13:00', '13:50', '14:40', '15:30', '16:20']; // Hasta las 16:20
+    
+    $todasLasHoras = array_merge($bloque1, $bloque2, $bloque3);
+    
+    foreach ($todasLasHoras as $horaInicio) {
+        $horaInicioObj = strtotime($horaInicio);
+        $horaFinObj = strtotime('+50 minutes', $horaInicioObj);
+        $horaFin = date('H:i', $horaFinObj);
+        
+        $horarios[] = [
+            'inicio' => $horaInicio,
+            'fin' => $horaFin
+        ];
+    }
+    
+    // Crear índice de clases por hora y día
+    $clasesIndex = [];
+    foreach ($detalles as $detalle) {
+        $dia = htmlspecialchars($detalle['dia']);
+        $inicio = substr($detalle['ha'], 0, 5); // Formato HH:MM
+        
+        if (!isset($clasesIndex[$dia])) {
+            $clasesIndex[$dia] = [];
+        }
+        
+        $clasesIndex[$dia][$inicio] = [
+            'aula' => $detalle['aula'],
+            'grupo' => $detalle['grupo'],
+            'ciclo' => $detalle['ciclo'],
+            'tipo' => $detalle['tipo']
+        ];
+    }
+    
+    // Generar tabla
+    $html = '<div class="table-responsive" style="max-height: 600px; overflow-y: auto;">';
+    $html .= '<table class="table table-bordered table-sm">';
+    $html .= '<thead class="table-dark">';
+    $html .= '<tr>';
+    $html .= '<th style="width: 12%; position: sticky; top: 0; background-color: #212529;">Hora</th>';
+    
+    foreach ($dias as $dia) {
+        $html .= '<th style="width: 18%; position: sticky; top: 0; background-color: #212529;">' . $dia . '</th>';
+    }
+    
+    $html .= '</tr>';
+    $html .= '</thead>';
+    $html .= '<tbody>';
+    
+    // Mostrar bloque 1
+    foreach ($bloque1 as $horaInicio) {
+        $horaFin = date('H:i', strtotime('+50 minutes', strtotime($horaInicio)));
+        $html .= '<tr>';
+        $html .= '<td class="hora-cell" style="font-weight: bold;">' . $horaInicio . '<br>-<br>' . $horaFin . '</td>';
+        
+        foreach ($dias as $dia) {
+            $clase = $clasesIndex[$dia][$horaInicio] ?? null;
+            
+            if ($clase) {
+                $html .= '<td class="clase-ocupada">';
+                $html .= '<strong>' . htmlspecialchars($clase['aula']) . '</strong><br>';
+                $html .= '<small>Grupo: ' . htmlspecialchars($clase['grupo']) . '</small><br>';
+                $html .= '<small>Ciclo: ' . htmlspecialchars($clase['ciclo']) . '</small>';
+                $html .= '</td>';
+            } else {
+                $html .= '<td class="clase-libre">Libre</td>';
+            }
+        }
+        
+        $html .= '</tr>';
+    }
+    
+    // Fila de receso 1
+    $html .= '<tr style="background-color: #f8d7da;">';
+    $html .= '<td class="hora-cell" style="font-weight: bold; text-align: center;">8:40 - 9:00<br><em>RECESO</em></td>';
+    foreach ($dias as $dia) {
+        $html .= '<td style="text-align: center; font-weight: bold;">RECESO</td>';
+    }
+    $html .= '</tr>';
+    
+    // Mostrar bloque 2
+    foreach ($bloque2 as $horaInicio) {
+        $horaFin = date('H:i', strtotime('+50 minutes', strtotime($horaInicio)));
+        $html .= '<tr>';
+        $html .= '<td class="hora-cell" style="font-weight: bold;">' . $horaInicio . '<br>-<br>' . $horaFin . '</td>';
+        
+        foreach ($dias as $dia) {
+            $clase = $clasesIndex[$dia][$horaInicio] ?? null;
+            
+            if ($clase) {
+                $html .= '<td class="clase-ocupada">';
+                $html .= '<strong>' . htmlspecialchars($clase['aula']) . '</strong><br>';
+                $html .= '<small>Grupo: ' . htmlspecialchars($clase['grupo']) . '</small><br>';
+                $html .= '<small>Ciclo: ' . htmlspecialchars($clase['ciclo']) . '</small>';
+                $html .= '</td>';
+            } else {
+                $html .= '<td class="clase-libre">Libre</td>';
+            }
+        }
+        
+        $html .= '</tr>';
+    }
+    
+    // Fila de receso 2
+    $html .= '<tr style="background-color: #f8d7da;">';
+    $html .= '<td class="hora-cell" style="font-weight: bold; text-align: center;">12:20 - 1:00<br><em>RECESO</em></td>';
+    foreach ($dias as $dia) {
+        $html .= '<td style="text-align: center; font-weight: bold;">RECESO</td>';
+    }
+    $html .= '</tr>';
+    
+    // Mostrar bloque 3
+    foreach ($bloque3 as $horaInicio) {
+        $horaFin = date('H:i', strtotime('+50 minutes', strtotime($horaInicio)));
+        $html .= '<tr>';
+        $html .= '<td class="hora-cell" style="font-weight: bold;">' . $horaInicio . '<br>-<br>' . $horaFin . '</td>';
+        
+        foreach ($dias as $dia) {
+            $clase = $clasesIndex[$dia][$horaInicio] ?? null;
+            
+            if ($clase) {
+                $html .= '<td class="clase-ocupada">';
+                $html .= '<strong>' . htmlspecialchars($clase['aula']) . '</strong><br>';
+                $html .= '<small>Grupo: ' . htmlspecialchars($clase['grupo']) . '</small><br>';
+                $html .= '<small>Ciclo: ' . htmlspecialchars($clase['ciclo']) . '</small>';
+                $html .= '</td>';
+            } else {
+                $html .= '<td class="clase-libre">Libre</td>';
+            }
+        }
+        
+        $html .= '</tr>';
+    }
+    
+    $html .= '</tbody>';
+    $html .= '</table>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Genera el modal con la tabla de horarios completa
+ */
+function generarModalHorario($nombreCompleto, $detalles, $id) {
+    $html = '<!-- Modal Horario ' . $id . ' -->';
+    $html .= '<div class="modal fade" id="horarioModal' . $id . '" tabindex="-1" aria-hidden="true">';
+    $html .= '<div class="modal-dialog modal-xl modal-dialog-centered">';
+    $html .= '<div class="modal-content">';
+    $html .= '<div class="modal-header" style="background-color: #f8f9fa;">';
+    $html .= '<h5 class="modal-title">Horario Semanal: ' . htmlspecialchars($nombreCompleto) . '</h5>';
+    $html .= '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>';
+    $html .= '</div>';
+    $html .= '<div class="modal-body">';
+    $html .= '<div class="alert alert-info" role="alert">';
+    $html .= '<small>';
+    $html .= '<strong>Horario:</strong> 7:00 AM - 4:20 PM | ';
+    $html .= '<strong>Duración de clase:</strong> 50 minutos | ';
+    $html .= '<strong>Recesos:</strong> 8:40-9:00 AM y 12:20-1:00 PM';
+    $html .= '</small>';
+    $html .= '</div>';
+    $html .= generarHorarioSemanal($detalles);
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+// Mostrar el contenido en la vista
+echo generarVistasDocentes();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -154,8 +513,65 @@
 </head>
 <body>
 
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const hoy = new Date();
+  const diaActual = diasSemana[hoy.getDay()];
+  const horaActual = hoy.getHours();
+
+  // Función para obtener el rango horario actual
+  function obtenerRangoHora(hora) {
+    if (hora >= 7 && hora < 8) return "7:00-8:00";
+    if (hora >= 8 && hora < 9) return "8:00-9:00";
+    if (hora >= 9 && hora < 10) return "9:00-10:00";
+    if (hora >= 10 && hora < 11) return "10:00-11:00";
+    if (hora >= 11 && hora < 12) return "11:00-12:00";
+    return null;
+  }
+
+  const rango = obtenerRangoHora(horaActual);
+  if (!rango) return; // Fuera del horario lectivo
+
+  // Recorre cada docente
+  document.querySelectorAll(".docente-card").forEach(card => {
+    const modalId = card.querySelector(".btn-horario").getAttribute("data-bs-target");
+    const tabla = document.querySelector(`${modalId} table`);
+    const filas = tabla.querySelectorAll("tbody tr");
+
+    let estaOcupado = false;
+
+    filas.forEach(fila => {
+      const hora = fila.querySelector(".hora-cell").textContent.trim();
+      if (hora === rango) {
+        const indiceDia = diasSemana.indexOf(diaActual);
+        if (indiceDia >= 1 && indiceDia <= 5) {
+          const celda = fila.children[indiceDia]; // Lunes=1 ... Viernes=5
+          if (celda.classList.contains("clase-ocupada")) {
+            estaOcupado = true;
+          }
+        }
+      }
+    });
+
+    const estado = card.querySelector(".status-badge");
+    if (estaOcupado) {
+      estado.textContent = "En clase";
+      estado.className = "status-badge status-red";
+    } else {
+      estado.textContent = "Disponible";
+      estado.className = "status-badge status-green";
+    }
+  });
+});
+</script>
+
   <div class="container py-5">
     <h3 class="mb-4 text-center">Disponibilidad de Docentes</h3>
+    <br>
+    <a href="solicitarconsulta.php" class="btn btn-danger mb-4">Cerrar Sesión</a>
 
     <div class="row justify-content-center g-4">
 
