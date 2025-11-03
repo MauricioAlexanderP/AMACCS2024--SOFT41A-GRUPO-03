@@ -1,3 +1,364 @@
+<?php
+/**
+ * Función para generar las tarjetas de docentes desde el JSON
+ * Lee config/detalles.json y agrupa los datos por docente
+ */
+
+
+function generarVistasDocentes() {
+    $jsonPath = __DIR__ . '/../config/detalles.json';
+    
+    if (!file_exists($jsonPath)) {
+        return '<div class="alert alert-danger">No se encontró el archivo de configuración.</div>';
+    }
+    
+    $jsonContent = file_get_contents($jsonPath);
+    $detalles = json_decode($jsonContent, true);
+    
+    if (empty($detalles)) {
+        return '<div class="alert alert-warning">No hay datos de docentes disponibles.</div>';
+    }
+    
+    // Agrupar datos por docente
+    $docentes = agruparPorDocente($detalles);
+    
+    // Generar HTML
+    $html = '<div class="container py-5">';
+    $html .= '<h3 class="mb-4 text-center">Disponibilidad de Docentes</h3>';
+    $html .= '<br>';
+    $html .= '<a href="logout.php" class="btn btn-danger mb-4">Cerrar Sesión</a>';
+    $html .= '<div class="row justify-content-center g-4">';
+    
+    $contador = 1;
+    foreach ($docentes as $nombreCompleto => $datos) {
+        $html .= generarTarjetaDocente($nombreCompleto, $datos, $contador);
+        $contador++;
+    }
+    
+    $html .= '</div></div>';
+    $html .= generarModales($docentes);
+    
+    return $html;
+}
+
+/**
+ * Agrupa los detalles por nombre de docente
+ */
+function agruparPorDocente($detalles) {
+    $docentes = [];
+    
+    foreach ($detalles as $detalle) {
+        $nombreCompleto = $detalle['nombre_docente'] . ' ' . $detalle['apellido_docente'];
+        
+        if (!isset($docentes[$nombreCompleto])) {
+            $docentes[$nombreCompleto] = [];
+        }
+        
+        $docentes[$nombreCompleto][] = $detalle;
+    }
+    
+    return $docentes;
+}
+
+/**
+ * Genera una tarjeta individual de docente
+ */
+function generarTarjetaDocente($nombreCompleto, $detalles, $id) {
+    $primerDetalle = $detalles[0];
+    $imagen = 'https://picsum.photos/400/200?random=' . $id;
+    
+    // Obtener el estado del JSON
+    $estado = $primerDetalle['estado_disponibilidad'] ?? 'disponible';
+    $notas = $primerDetalle['notas_disponibilidad'] ?? '';
+    
+    // Mapear estado a clase de badge
+    $estadoClases = [
+        'disponible' => 'status-green',
+        'ocupado' => 'status-red',
+        'revisando' => 'status-yellow',
+        'reunion' => 'status-yellow',
+        'laboratorio' => 'status-yellow',
+        'almuerzo' => 'status-orange'
+    ];
+    
+    $estadoEtiquetas = [
+        'disponible' => 'Disponible',
+        'ocupado' => 'Atendiendo estudiante',
+        'revisando' => 'Revisando tareas',
+        'reunion' => 'En reunión',
+        'laboratorio' => 'En laboratorio',
+        'almuerzo' => 'En almuerzo'
+    ];
+    
+    $estadoClase = $estadoClases[$estado] ?? 'status-green';
+    $estadoEtiqueta = $estadoEtiquetas[$estado] ?? 'Disponible';
+    
+    $html = '<div class="col-md-4 col-sm-6">';
+    $html .= '<div class="docente-card">';
+    $html .= '<img src="' . htmlspecialchars($imagen) . '" alt="Docente" class="docente-img">';
+    $html .= '<div class="docente-body">';
+    $html .= '<p class="docente-nombre">' . htmlspecialchars($nombreCompleto) . '</p>';
+    $html .= '<p class="docente-area">Área: ' . htmlspecialchars($primerDetalle['aula']) . '</p>';
+    $html .= '<span class="status-badge ' . $estadoClase . '">' . $estadoEtiqueta . '</span>';
+    
+    if (!empty($notas)) {
+        $html .= '<p class="docente-notas" style="font-size: 0.85rem; color: #666; margin-top: 8px;"><em>' . htmlspecialchars($notas) . '</em></p>';
+    }
+    
+    $html .= '<div class="mt-3 botones-group">';
+    $html .= '<button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal' . $id . '">Editar Disponibilidad</button>';
+    $html .= '<button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal' . $id . '">Ver Horario</button>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Genera todos los modales (edición y horarios)
+ */
+function generarModales($docentes) {
+    $html = '';
+    $id = 1;
+    
+    foreach ($docentes as $nombreCompleto => $detalles) {
+        $html .= generarModalEditar($nombreCompleto, $detalles, $id);
+        $html .= generarModalHorario($nombreCompleto, $detalles, $id);
+        $id++;
+    }
+    
+    return $html;
+}
+
+/**
+ * Genera el modal de edición de disponibilidad
+ */
+function generarModalEditar($nombreCompleto, $detalles, $id) {
+    $html = '<!-- Modal Editar ' . $id . ' -->';
+    $html .= '<div class="modal fade" id="editarModal' . $id . '" tabindex="-1" aria-hidden="true">';
+    $html .= '<div class="modal-dialog modal-dialog-centered">';
+    $html .= '<div class="modal-content">';
+    $html .= '<div class="modal-header editar">';
+    $html .= '<h5 class="modal-title">Editar Disponibilidad - ' . htmlspecialchars($nombreCompleto) . '</h5>';
+    $html .= '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>';
+    $html .= '</div>';
+    $html .= '<div class="modal-body">';
+  $html .= '<form action="../controller/actualizaDocente.php" method="POST">';
+    $html .= '<input type="hidden" name="docente_id" value="' . $id . '">';
+    $html .= '<input type="hidden" name="nombre_docente" value="' . htmlspecialchars($nombreCompleto) . '">';
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="estado' . $id . '" class="form-label">Estado de Disponibilidad:</label>';
+    $html .= '<select class="form-select" id="estado' . $id . '" name="estado" required>';
+    $html .= '<option value="disponible" selected>Disponible</option>';
+    $html .= '<option value="ocupado">Atendiendo estudiante</option>';
+    $html .= '<option value="revisando">Revisando tareas</option>';
+    $html .= '<option value="reunion">En reunión</option>';
+    $html .= '<option value="laboratorio">En laboratorio</option>';
+    $html .= '<option value="almuerzo">En almuerzo</option>';
+    $html .= '</select>';
+    $html .= '</div>';
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="notas' . $id . '" class="form-label">Notas adicionales (opcional):</label>';
+    $html .= '<textarea class="form-control" id="notas' . $id . '" name="notas" rows="3" placeholder="Ej: Regreso en 15 minutos"></textarea>';
+    $html .= '</div>';
+    $html .= '<div class="d-flex justify-content-end gap-2">';
+    $html .= '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>';
+    $html .= '<button type="submit" class="btn btn-success">Guardar Cambios</button>';
+    $html .= '</div>';
+    $html .= '</form>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Genera el horario semanal completo (7:00 a 16:20)
+ * Con recesos: 8:40-9:00 y 12:20-13:00
+ */
+function generarHorarioSemanal($detalles) {
+    $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+    $horarios = [];
+    
+    // Bloques de horarios: antes del primer receso, después del primer receso, después del segundo receso
+    $bloque1 = ['07:00', '07:50', '08:40']; // Termina a las 8:40
+    $bloque2 = ['09:00', '09:50', '10:40', '11:30', '12:20']; // Termina a las 12:20
+    $bloque3 = ['13:00', '13:50', '14:40', '15:30', '16:20']; // Hasta las 16:20
+    
+    $todasLasHoras = array_merge($bloque1, $bloque2, $bloque3);
+    
+    foreach ($todasLasHoras as $horaInicio) {
+        $horaInicioObj = strtotime($horaInicio);
+        $horaFinObj = strtotime('+50 minutes', $horaInicioObj);
+        $horaFin = date('H:i', $horaFinObj);
+        
+        $horarios[] = [
+            'inicio' => $horaInicio,
+            'fin' => $horaFin
+        ];
+    }
+    
+    // Crear índice de clases por hora y día
+    $clasesIndex = [];
+    foreach ($detalles as $detalle) {
+        $dia = htmlspecialchars($detalle['dia']);
+        $inicio = substr($detalle['ha'], 0, 5); // Formato HH:MM
+        
+        if (!isset($clasesIndex[$dia])) {
+            $clasesIndex[$dia] = [];
+        }
+        
+        $clasesIndex[$dia][$inicio] = [
+            'aula' => $detalle['aula'],
+            'grupo' => $detalle['grupo'],
+            'ciclo' => $detalle['ciclo'],
+            'tipo' => $detalle['tipo']
+        ];
+    }
+    
+    // Generar tabla
+    $html = '<div class="table-responsive" style="max-height: 600px; overflow-y: auto;">';
+    $html .= '<table class="table table-bordered table-sm">';
+    $html .= '<thead class="table-dark">';
+    $html .= '<tr>';
+    $html .= '<th style="width: 12%; position: sticky; top: 0; background-color: #212529;">Hora</th>';
+    
+    foreach ($dias as $dia) {
+        $html .= '<th style="width: 18%; position: sticky; top: 0; background-color: #212529;">' . $dia . '</th>';
+    }
+    
+    $html .= '</tr>';
+    $html .= '</thead>';
+    $html .= '<tbody>';
+    
+    // Mostrar bloque 1
+    foreach ($bloque1 as $horaInicio) {
+        $horaFin = date('H:i', strtotime('+50 minutes', strtotime($horaInicio)));
+        $html .= '<tr>';
+        $html .= '<td class="hora-cell" style="font-weight: bold;">' . $horaInicio . '<br>-<br>' . $horaFin . '</td>';
+        
+        foreach ($dias as $dia) {
+            $clase = $clasesIndex[$dia][$horaInicio] ?? null;
+            
+            if ($clase) {
+                $html .= '<td class="clase-ocupada">';
+                $html .= '<strong>' . htmlspecialchars($clase['aula']) . '</strong><br>';
+                $html .= '<small>Grupo: ' . htmlspecialchars($clase['grupo']) . '</small><br>';
+                $html .= '<small>Ciclo: ' . htmlspecialchars($clase['ciclo']) . '</small>';
+                $html .= '</td>';
+            } else {
+                $html .= '<td class="clase-libre">Libre</td>';
+            }
+        }
+        
+        $html .= '</tr>';
+    }
+    
+    // Fila de receso 1
+    $html .= '<tr style="background-color: #f8d7da;">';
+    $html .= '<td class="hora-cell" style="font-weight: bold; text-align: center;">8:40 - 9:00<br><em>RECESO</em></td>';
+    foreach ($dias as $dia) {
+        $html .= '<td style="text-align: center; font-weight: bold;">RECESO</td>';
+    }
+    $html .= '</tr>';
+    
+    // Mostrar bloque 2
+    foreach ($bloque2 as $horaInicio) {
+        $horaFin = date('H:i', strtotime('+50 minutes', strtotime($horaInicio)));
+        $html .= '<tr>';
+        $html .= '<td class="hora-cell" style="font-weight: bold;">' . $horaInicio . '<br>-<br>' . $horaFin . '</td>';
+        
+        foreach ($dias as $dia) {
+            $clase = $clasesIndex[$dia][$horaInicio] ?? null;
+            
+            if ($clase) {
+                $html .= '<td class="clase-ocupada">';
+                $html .= '<strong>' . htmlspecialchars($clase['aula']) . '</strong><br>';
+                $html .= '<small>Grupo: ' . htmlspecialchars($clase['grupo']) . '</small><br>';
+                $html .= '<small>Ciclo: ' . htmlspecialchars($clase['ciclo']) . '</small>';
+                $html .= '</td>';
+            } else {
+                $html .= '<td class="clase-libre">Libre</td>';
+            }
+        }
+        
+        $html .= '</tr>';
+    }
+    
+    // Fila de receso 2
+    $html .= '<tr style="background-color: #f8d7da;">';
+    $html .= '<td class="hora-cell" style="font-weight: bold; text-align: center;">12:20 - 1:00<br><em>RECESO</em></td>';
+    foreach ($dias as $dia) {
+        $html .= '<td style="text-align: center; font-weight: bold;">RECESO</td>';
+    }
+    $html .= '</tr>';
+    
+    // Mostrar bloque 3
+    foreach ($bloque3 as $horaInicio) {
+        $horaFin = date('H:i', strtotime('+50 minutes', strtotime($horaInicio)));
+        $html .= '<tr>';
+        $html .= '<td class="hora-cell" style="font-weight: bold;">' . $horaInicio . '<br>-<br>' . $horaFin . '</td>';
+        
+        foreach ($dias as $dia) {
+            $clase = $clasesIndex[$dia][$horaInicio] ?? null;
+            
+            if ($clase) {
+                $html .= '<td class="clase-ocupada">';
+                $html .= '<strong>' . htmlspecialchars($clase['aula']) . '</strong><br>';
+                $html .= '<small>Grupo: ' . htmlspecialchars($clase['grupo']) . '</small><br>';
+                $html .= '<small>Ciclo: ' . htmlspecialchars($clase['ciclo']) . '</small>';
+                $html .= '</td>';
+            } else {
+                $html .= '<td class="clase-libre">Libre</td>';
+            }
+        }
+        
+        $html .= '</tr>';
+    }
+    
+    $html .= '</tbody>';
+    $html .= '</table>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Genera el modal con la tabla de horarios completa
+ */
+function generarModalHorario($nombreCompleto, $detalles, $id) {
+    $html = '<!-- Modal Horario ' . $id . ' -->';
+    $html .= '<div class="modal fade" id="horarioModal' . $id . '" tabindex="-1" aria-hidden="true">';
+    $html .= '<div class="modal-dialog modal-xl modal-dialog-centered">';
+    $html .= '<div class="modal-content">';
+    $html .= '<div class="modal-header" style="background-color: #f8f9fa;">';
+    $html .= '<h5 class="modal-title">Horario Semanal: ' . htmlspecialchars($nombreCompleto) . '</h5>';
+    $html .= '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>';
+    $html .= '</div>';
+    $html .= '<div class="modal-body">';
+    $html .= '<div class="alert alert-info" role="alert">';
+    $html .= '<small>';
+    $html .= '<strong>Horario:</strong> 7:00 AM - 4:20 PM | ';
+    $html .= '<strong>Duración de clase:</strong> 50 minutos | ';
+    $html .= '<strong>Recesos:</strong> 8:40-9:00 AM y 12:20-1:00 PM';
+    $html .= '</small>';
+    $html .= '</div>';
+    $html .= generarHorarioSemanal($detalles);
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+// Mostrar el contenido en la vista
+echo generarVistasDocentes();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -154,750 +515,163 @@
 </head>
 <body>
 
-  <div class="container py-5">
-    <h3 class="mb-4 text-center">Disponibilidad de Docentes</h3>
 
-    <div class="row justify-content-center g-4">
 
-      <!-- Card 1 -->
-      <div class="col-md-4 col-sm-6">
-        <div class="docente-card">
-          <img src="https://picsum.photos/400/200?random=1" alt="Profesor" class="docente-img">
-          <div class="docente-body">
-            <p class="docente-nombre">Prof. Juan Martínez</p>
-            <p class="docente-area">Área: Matemáticas</p>
-            <span class="status-badge status-green">Disponible</span>
-            <div class="mt-3 botones-group">
-              <button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal1">Editar Disponibilidad</button>
-              <button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal1">Ver Horario</button>
-            </div>
-          </div>
-        </div>
-      </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const hoy = new Date();
+  const diaActual = diasSemana[hoy.getDay()];
+  const horaActual = hoy.getHours();
 
-      <!-- Card 2 -->
-      <div class="col-md-4 col-sm-6">
-        <div class="docente-card">
-          <img src="https://picsum.photos/400/200?random=2" alt="Profesora" class="docente-img">
-          <div class="docente-body">
-            <p class="docente-nombre">Dra. María Gómez</p>
-            <p class="docente-area">Área: Biología</p>
-            <span class="status-badge status-yellow">Revisando tareas</span>
-            <div class="mt-3 botones-group">
-              <button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal2">Editar Disponibilidad</button>
-              <button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal2">Ver Horario</button>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Función para obtener el rango horario actual
+  function obtenerRangoHora(hora) {
+    if (hora >= 7 && hora < 8) return "7:00-8:00";
+    if (hora >= 8 && hora < 9) return "8:00-9:00";
+    if (hora >= 9 && hora < 10) return "9:00-10:00";
+    if (hora >= 10 && hora < 11) return "10:00-11:00";
+    if (hora >= 11 && hora < 12) return "11:00-12:00";
+    return null;
+  }
 
-      <!-- Card 3 -->
-      <div class="col-md-4 col-sm-6">
-        <div class="docente-card">
-          <img src="https://picsum.photos/400/200?random=3" alt="Ingeniero" class="docente-img">
-          <div class="docente-body">
-            <p class="docente-nombre">Ing. Carlos Pérez</p>
-            <p class="docente-area">Área: Ingeniería Civil</p>
-            <span class="status-badge status-red">Atendiendo estudiante</span>
-            <div class="mt-3 botones-group">
-              <button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal3">Editar Disponibilidad</button>
-              <button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal3">Ver Horario</button>
-            </div>
-          </div>
-        </div>
-      </div>
+  const rango = obtenerRangoHora(horaActual);
+  if (!rango) return; // Fuera del horario lectivo
 
-      <!-- Card 4 -->
-      <div class="col-md-4 col-sm-6">
-        <div class="docente-card">
-          <img src="https://picsum.photos/400/200?random=4" alt="Profesora" class="docente-img">
-          <div class="docente-body">
-            <p class="docente-nombre">Lic. Ana Torres</p>
-            <p class="docente-area">Área: Literatura</p>
-            <span class="status-badge status-green">Disponible</span>
-            <div class="mt-3 botones-group">
-              <button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal4">Editar Disponibilidad</button>
-              <button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal4">Ver Horario</button>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Recorre cada docente
+  document.querySelectorAll(".docente-card").forEach(card => {
+    const modalId = card.querySelector(".btn-horario").getAttribute("data-bs-target");
+    const tabla = document.querySelector(`${modalId} table`);
+    const filas = tabla.querySelectorAll("tbody tr");
 
-      <!-- Card 5 -->
-      <div class="col-md-4 col-sm-6">
-        <div class="docente-card">
-          <img src="https://picsum.photos/400/200?random=5" alt="Profesor" class="docente-img">
-          <div class="docente-body">
-            <p class="docente-nombre">Dr. Luis Ramírez</p>
-            <p class="docente-area">Área: Química</p>
-            <span class="status-badge status-yellow">En laboratorio</span>
-            <div class="mt-3 botones-group">
-              <button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal5">Editar Disponibilidad</button>
-              <button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal5">Ver Horario</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    let estaOcupado = false;
 
-      <!-- Card 6 -->
-      <div class="col-md-4 col-sm-6">
-        <div class="docente-card">
-          <img src="https://picsum.photos/400/200?random=6" alt="Profesora" class="docente-img">
-          <div class="docente-body">
-            <p class="docente-nombre">Prof. Sandra López</p>
-            <p class="docente-area">Área: Historia</p>
-            <span class="status-badge status-green">Disponible</span>
-            <div class="mt-3 botones-group">
-              <button class="btn-editar" data-bs-toggle="modal" data-bs-target="#editarModal6">Editar Disponibilidad</button>
-              <button class="btn-horario" data-bs-toggle="modal" data-bs-target="#horarioModal6">Ver Horario</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    filas.forEach(fila => {
+      const hora = fila.querySelector(".hora-cell").textContent.trim();
+      if (hora === rango) {
+        const indiceDia = diasSemana.indexOf(diaActual);
+        if (indiceDia >= 1 && indiceDia <= 5) {
+          const celda = fila.children[indiceDia]; // Lunes=1 ... Viernes=5
+          if (celda.classList.contains("clase-ocupada")) {
+            estaOcupado = true;
+          }
+        }
+      }
+    });
 
-    </div>
-  </div>
-
-  <!-- Modal Editar Disponibilidad 1 -->
-  <div class="modal fade" id="editarModal1" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header editar">
-          <h5 class="modal-title">Editar Disponibilidad - Prof. Juan Martínez</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form action="actualizar_disponibilidad.php" method="POST">
-            <input type="hidden" name="docente_id" value="1">
-            
-            <div class="mb-3">
-              <label for="estado1" class="form-label">Estado de Disponibilidad:</label>
-              <select class="form-select" id="estado1" name="estado" required>
-                <option value="disponible" selected>Disponible</option>
-                <option value="ocupado">Atendiendo estudiante</option>
-                <option value="revisando">Revisando tareas</option>
-                <option value="reunion">En reunión</option>
-                <option value="laboratorio">En laboratorio</option>
-                <option value="almuerzo">En almuerzo</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label for="notas1" class="form-label">Notas adicionales (opcional):</label>
-              <textarea class="form-control" id="notas1" name="notas" rows="3" placeholder="Ej: Regreso en 15 minutos"></textarea>
-            </div>
-
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Horario 1 -->
-  <div class="modal fade" id="horarioModal1" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Horario: Prof. Juan Martínez - Matemáticas</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th style="width: 15%;">Hora</th>
-                  <th>Lunes</th>
-                  <th>Martes</th>
-                  <th>Miércoles</th>
-                  <th>Jueves</th>
-                  <th>Viernes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="hora-cell">7:00-8:00</td>
-                  <td class="clase-ocupada">Cálculo I<br><small>Aula 201</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Cálculo I<br><small>Aula 201</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Álgebra<br><small>Aula 105</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">8:00-9:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Cálculo II<br><small>Aula 303</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Cálculo II<br><small>Aula 303</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">9:00-10:00</td>
-                  <td class="clase-ocupada">Álgebra<br><small>Aula 105</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Álgebra<br><small>Aula 105</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Cálculo I<br><small>Aula 201</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">10:00-11:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Geometría<br><small>Aula 210</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Geometría<br><small>Aula 210</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">11:00-12:00</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 12</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 12</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Reunión Depto<br><small>Sala 401</small></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modales para los demás docentes (2-6) con el mismo formato -->
-  <!-- Modal Editar 2 -->
-  <div class="modal fade" id="editarModal2" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header editar">
-          <h5 class="modal-title">Editar Disponibilidad - Dra. María Gómez</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form action="actualizar_disponibilidad.php" method="POST">
-            <input type="hidden" name="docente_id" value="2">
-            <div class="mb-3">
-              <label class="form-label">Estado de Disponibilidad:</label>
-              <select class="form-select" name="estado" required>
-                <option value="disponible">Disponible</option>
-                <option value="ocupado">Atendiendo estudiante</option>
-                <option value="revisando" selected>Revisando tareas</option>
-                <option value="reunion">En reunión</option>
-                <option value="laboratorio">En laboratorio</option>
-                <option value="almuerzo">En almuerzo</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Notas adicionales:</label>
-              <textarea class="form-control" name="notas" rows="3"></textarea>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Horario 2 -->
-  <div class="modal fade" id="horarioModal2" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Horario: Dra. María Gómez - Biología</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th style="width: 15%;">Hora</th>
-                  <th>Lunes</th>
-                  <th>Martes</th>
-                  <th>Miércoles</th>
-                  <th>Jueves</th>
-                  <th>Viernes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="hora-cell">7:00-8:00</td>
-                  <td class="clase-ocupada">Biología I<br><small>Lab 101</small></td>
-                  <td class="clase-ocupada">Biología I<br><small>Lab 101</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Ecología<br><small>Aula 305</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">8:00-9:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Genética<br><small>Aula 210</small></td>
-                  <td class="clase-ocupada">Biología II<br><small>Lab 102</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Genética<br><small>Aula 210</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">9:00-10:00</td>
-                  <td class="clase-ocupada">Biología II<br><small>Lab 102</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Ecología<br><small>Aula 305</small></td>
-                  <td class="clase-ocupada">Biología II<br><small>Lab 102</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">10:00-11:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 15</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 15</small></td>
-                  <td class="clase-ocupada">Investigación<br><small>Lab 103</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">11:00-12:00</td>
-                  <td class="clase-ocupada">Investigación<br><small>Lab 103</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Investigación<br><small>Lab 103</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Editar 3 -->
-  <div class="modal fade" id="editarModal3" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header editar">
-          <h5 class="modal-title">Editar Disponibilidad - Ing. Carlos Pérez</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form action="actualizar_disponibilidad.php" method="POST">
-            <input type="hidden" name="docente_id" value="3">
-            <div class="mb-3">
-              <label class="form-label">Estado de Disponibilidad:</label>
-              <select class="form-select" name="estado" required>
-                <option value="disponible">Disponible</option>
-                <option value="ocupado" selected>Atendiendo estudiante</option>
-                <option value="revisando">Revisando tareas</option>
-                <option value="reunion">En reunión</option>
-                <option value="laboratorio">En laboratorio</option>
-                <option value="almuerzo">En almuerzo</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Notas adicionales:</label>
-              <textarea class="form-control" name="notas" rows="3"></textarea>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Horario 3 -->
-  <div class="modal fade" id="horarioModal3" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Horario: Ing. Carlos Pérez - Ingeniería Civil</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th style="width: 15%;">Hora</th>
-                  <th>Lunes</th>
-                  <th>Martes</th>
-                  <th>Miércoles</th>
-                  <th>Jueves</th>
-                  <th>Viernes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="hora-cell">7:00-8:00</td>
-                  <td class="clase-ocupada">Estructuras I<br><small>Aula 401</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Estructuras I<br><small>Aula 401</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Materiales<br><small>Lab 205</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">8:00-9:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Hidráulica<br><small>Aula 310</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Hidráulica<br><small>Aula 310</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">9:00-10:00</td>
-                  <td class="clase-ocupada">Geotecnia<br><small>Aula 215</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Geotecnia<br><small>Aula 215</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Estructuras II<br><small>Aula 402</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">10:00-11:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Estructuras II<br><small>Aula 402</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Proyecto Final<br><small>Taller 1</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">11:00-12:00</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 20</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 20</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Supervisión Obra<br><small>Campo</small></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Editar 4 -->
-  <div class="modal fade" id="editarModal4" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header editar">
-          <h5 class="modal-title">Editar Disponibilidad - Lic. Ana Torres</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form action="actualizar_disponibilidad.php" method="POST">
-            <input type="hidden" name="docente_id" value="4">
-            <div class="mb-3">
-              <label class="form-label">Estado de Disponibilidad:</label>
-              <select class="form-select" name="estado" required>
-                <option value="disponible" selected>Disponible</option>
-                <option value="ocupado">Atendiendo estudiante</option>
-                <option value="revisando">Revisando tareas</option>
-                <option value="reunion">En reunión</option>
-                <option value="laboratorio">En laboratorio</option>
-                <option value="almuerzo">En almuerzo</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Notas adicionales:</label>
-              <textarea class="form-control" name="notas" rows="3"></textarea>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Horario 4 -->
-  <div class="modal fade" id="horarioModal4" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Horario: Lic. Ana Torres - Literatura</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th style="width: 15%;">Hora</th>
-                  <th>Lunes</th>
-                  <th>Martes</th>
-                  <th>Miércoles</th>
-                  <th>Jueves</th>
-                  <th>Viernes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="hora-cell">7:00-8:00</td>
-                  <td class="clase-ocupada">Literatura I<br><small>Aula 115</small></td>
-                  <td class="clase-ocupada">Redacción<br><small>Aula 120</small></td>
-                  <td class="clase-ocupada">Literatura I<br><small>Aula 115</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Poesía<br><small>Aula 118</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">8:00-9:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Literatura II<br><small>Aula 116</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Literatura II<br><small>Aula 116</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">9:00-10:00</td>
-                  <td class="clase-ocupada">Redacción<br><small>Aula 120</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Teatro<br><small>Auditorio</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Literatura I<br><small>Aula 115</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">10:00-11:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Poesía<br><small>Aula 118</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Redacción<br><small>Aula 120</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">11:00-12:00</td>
-                  <td class="clase-ocupada">Club Lectura<br><small>Biblioteca</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 8</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Taller Escritura<br><small>Aula 122</small></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Editar 5 -->
-  <div class="modal fade" id="editarModal5" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header editar">
-          <h5 class="modal-title">Editar Disponibilidad - Dr. Luis Ramírez</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form action="actualizar_disponibilidad.php" method="POST">
-            <input type="hidden" name="docente_id" value="5">
-            <div class="mb-3">
-              <label class="form-label">Estado de Disponibilidad:</label>
-              <select class="form-select" name="estado" required>
-                <option value="disponible">Disponible</option>
-                <option value="ocupado">Atendiendo estudiante</option>
-                <option value="revisando">Revisando tareas</option>
-                <option value="reunion">En reunión</option>
-                <option value="laboratorio" selected>En laboratorio</option>
-                <option value="almuerzo">En almuerzo</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Notas adicionales:</label>
-              <textarea class="form-control" name="notas" rows="3"></textarea>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Horario 5 -->
-  <div class="modal fade" id="horarioModal5" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Horario: Dr. Luis Ramírez - Química</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th style="width: 15%;">Hora</th>
-                  <th>Lunes</th>
-                  <th>Martes</th>
-                  <th>Miércoles</th>
-                  <th>Jueves</th>
-                  <th>Viernes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="hora-cell">7:00-8:00</td>
-                  <td class="clase-ocupada">Química Org.<br><small>Lab 301</small></td>
-                  <td class="clase-ocupada">Química Org.<br><small>Lab 301</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Química Gen.<br><small>Aula 205</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">8:00-9:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Bioquímica<br><small>Lab 302</small></td>
-                  <td class="clase-ocupada">Química Inorg.<br><small>Lab 303</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Bioquímica<br><small>Lab 302</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">9:00-10:00</td>
-                  <td class="clase-ocupada">Química Gen.<br><small>Aula 205</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Química Org.<br><small>Lab 301</small></td>
-                  <td class="clase-ocupada">Bioquímica<br><small>Lab 302</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">10:00-11:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Química Gen.<br><small>Aula 205</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Química Inorg.<br><small>Lab 303</small></td>
-                  <td class="clase-ocupada">Investigación<br><small>Lab 304</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">11:00-12:00</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 25</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Investigación<br><small>Lab 304</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Seminario<br><small>Sala 302</small></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Editar 6 -->
-  <div class="modal fade" id="editarModal6" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header editar">
-          <h5 class="modal-title">Editar Disponibilidad - Prof. Sandra López</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form action="actualizar_disponibilidad.php" method="POST">
-            <input type="hidden" name="docente_id" value="6">
-            <div class="mb-3">
-              <label class="form-label">Estado de Disponibilidad:</label>
-              <select class="form-select" name="estado" required>
-                <option value="disponible" selected>Disponible</option>
-                <option value="ocupado">Atendiendo estudiante</option>
-                <option value="revisando">Revisando tareas</option>
-                <option value="reunion">En reunión</option>
-                <option value="laboratorio">En laboratorio</option>
-                <option value="almuerzo">En almuerzo</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Notas adicionales:</label>
-              <textarea class="form-control" name="notas" rows="3"></textarea>
-            </div>
-            <div class="d-flex justify-content-end gap-2">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Horario 6 -->
-  <div class="modal fade" id="horarioModal6" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Horario: Prof. Sandra López - Historia</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th style="width: 15%;">Hora</th>
-                  <th>Lunes</th>
-                  <th>Martes</th>
-                  <th>Miércoles</th>
-                  <th>Jueves</th>
-                  <th>Viernes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="hora-cell">7:00-8:00</td>
-                  <td class="clase-ocupada">Historia Universal<br><small>Aula 130</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Historia Universal<br><small>Aula 130</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">H. Latinoam.<br><small>Aula 135</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">8:00-9:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Historia Antigua<br><small>Aula 132</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Historia Antigua<br><small>Aula 132</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">9:00-10:00</td>
-                  <td class="clase-ocupada">H. Latinoam.<br><small>Aula 135</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">H. Moderna<br><small>Aula 140</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Historia Universal<br><small>Aula 130</small></td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">10:00-11:00</td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">H. Moderna<br><small>Aula 140</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">H. Latinoam.<br><small>Aula 135</small></td>
-                  <td class="clase-libre">Libre</td>
-                </tr>
-                <tr>
-                  <td class="hora-cell">11:00-12:00</td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 18</small></td>
-                  <td class="clase-libre">Libre</td>
-                  <td class="clase-ocupada">Seminario<br><small>Sala 250</small></td>
-                  <td class="clase-ocupada">Tutoría<br><small>Oficina 18</small></td>
-                  <td class="clase-ocupada">Investigación<br><small>Biblioteca</small></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    const estado = card.querySelector(".status-badge");
+    if (estaOcupado) {
+      estado.textContent = "En clase";
+      estado.className = "status-badge status-red";
+    } else {
+      estado.textContent = "Disponible";
+      estado.className = "status-badge status-green";
+    }
+  });
+});
+</script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <div id="flash-container" style="position:fixed;top:16px;right:16px;z-index:2000"></div>
+
+  <script>
+  (function(){
+    function showFlash(type, msg, timeout = 3000){
+      const container = document.getElementById('flash-container');
+      if(!container) return;
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+      container.appendChild(wrapper);
+      setTimeout(()=>{ try{ const bs = bootstrap.Alert.getOrCreateInstance(wrapper.querySelector('.alert')); bs.close(); }catch(e){} }, timeout);
+    }
+
+   
+    function estadoToClass(estado){
+      estado = (estado||'').toLowerCase();
+      if(estado === 'disponible') return 'status-green';
+      if(estado === 'ocupado' || estado === 'atendiendo estudiante' || estado === 'atendiendo') return 'status-red';
+      return 'status-yellow';
+    }
+
+    
+    function updateBadgeForDocente(nombre, estado){
+      const cards = document.querySelectorAll('.docente-card');
+      for(const card of cards){
+        const n = card.querySelector('.docente-nombre');
+        if(!n) continue;
+        if(n.textContent.trim() === nombre.trim()){
+          const badge = card.querySelector('.status-badge');
+          if(badge){
+            badge.textContent = estado.charAt(0).toUpperCase() + estado.slice(1);
+            badge.classList.remove('status-green','status-yellow','status-red');
+            badge.classList.add(estadoToClass(estado));
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+    document.addEventListener('submit', function(e){
+      const form = e.target;
+      if(!form || !form.action) return;
+      if(!form.action.includes('actualizaDocente.php')) return;
+
+      e.preventDefault();
+
+      const fd = new FormData(form);
+
+     
+      if(!fd.get('nombre_docente')){
+        const modal = form.closest('.modal');
+        if(modal){
+          const title = modal.querySelector('.modal-title');
+          if(title){
+            const text = title.textContent.replace(/^Editar Disponibilidad - /i,'').trim();
+            if(text) fd.set('nombre_docente', text);
+          }
+        }
+      }
+
+    
+      fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      }).then(r=>r.json()).then(data=>{
+        const ok = (data.status === 'exito' || data.status === 'success');
+        // Mostrar mensaje simplificado en caso de éxito
+        if (ok) {
+          showFlash('success', 'actualizado correctamente');
+        } else {
+          const displayName = data.nombre ? (data.nombre + ': ') : '';
+          const displayMsg = data.mensaje || data.message || 'Error';
+          showFlash('danger', displayName + displayMsg);
+        }
+
+       
+        try{
+          const modalEl = form.closest('.modal');
+          if(modalEl){
+            const bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            bsModal.hide();
+          }
+        }catch(e){ }
+
+        
+        const nombre = fd.get('nombre_docente') || '';
+        const estado = fd.get('estado') || '';
+        if(nombre && estado){
+          updateBadgeForDocente(nombre, estado);
+        }
+
+      }).catch(err=>{
+        showFlash('danger','Error de red al actualizar');
+      });
+    });
+  })();
+  </script>
 </body>
 </html>
