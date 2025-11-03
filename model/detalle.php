@@ -292,11 +292,12 @@ public function editarDisponibilidad($nombre_docente, $estado, $notas = '') {
                 ];
             }
             
-            return [
-                'status' => 'exito',
-                'mensaje' => "Se actualizó la disponibilidad de {$registrosActualizados} clase(s) del docente.",
-                'registros_actualizados' => $registrosActualizados
-            ];
+      return [
+        'status' => 'exito',
+        // Mensaje corto y consistente para la UI
+        'mensaje' => 'actualizado correctamente',
+        'registros_actualizados' => $registrosActualizados
+      ];
             
         } catch (Exception $e) {
             return [

@@ -18,9 +18,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43199314102II2024LunesELEC21U1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -42,9 +42,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43199314102II2024LunesELEC21U1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -68,8 +68,8 @@
         "cod_alldetalle": "44199316102II2024LunesELEC21U1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "8",
@@ -92,8 +92,8 @@
         "cod_alldetalle": "44199316102II2024LunesELEC21U1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "9",
@@ -258,9 +258,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -282,9 +282,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -306,9 +306,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -330,9 +330,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -354,9 +354,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -378,9 +378,9 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-02 00:33:30",
         "estado": "disponible"
     },
     {
@@ -644,8 +644,8 @@
         "cod_alldetalle": "44201316PLCII2024MiercolesELEC21B1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "32",
@@ -668,8 +668,8 @@
         "cod_alldetalle": "44201316PLCII2024MiercolesELEC21B1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "33",
@@ -692,8 +692,8 @@
         "cod_alldetalle": "44201316PLCII2024MiercolesELEC21B1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "34",
@@ -716,8 +716,8 @@
         "cod_alldetalle": "44200316PLCII2024MiercolesELEC21A1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "35",
@@ -740,8 +740,8 @@
         "cod_alldetalle": "44200316PLCII2024MiercolesELEC21A1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "36",
@@ -764,8 +764,8 @@
         "cod_alldetalle": "44200316PLCII2024MiercolesELEC21A1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-02 00:23:35",
+        "estado": "reunion"
     },
     {
         "id_detalle": "37",
@@ -2694,30 +2694,6 @@
         "aula": "C104",
         "ha": "13:00:00",
         "hf": "13:50:00",
-        "ciclo": "IV",
-        "year": "2024",
-        "dia": "Jueves",
-        "grupo": "ELEC41",
-        "tipo": "U",
-        "horas": "1",
-        "version": "v3",
-        "fechaini": "2024-07-22",
-        "fechafin": "2024-09-20",
-        "comentarioreserva": "",
-        "carnetusuario": "2195",
-        "cod_alldetalle": "59208329C104IV2024JuevesELEC41U1v320240722202409202195",
-        "estado_disponibilidad": "disponible",
-        "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
-    },
-    {
-        "id_detalle": "158",
-        "nombre_docente": "Rafael",
-        "apellido_docente": "Asencio",
-        "aula": "C104",
-        "ha": "13:50:00",
-        "hf": "14:40:00",
         "ciclo": "IV",
         "year": "2024",
         "dia": "Jueves",
