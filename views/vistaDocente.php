@@ -374,7 +374,7 @@ echo generarVistasDocentes();
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Disponibilidad de Docentes</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <style>
     body {
@@ -531,20 +531,27 @@ document.addEventListener("DOMContentLoaded", function() {
   // Funcionalidad de búsqueda
   const inputBusqueda = document.getElementById('buscarDocente');
   const listaDocentes = document.getElementById('listaDocentes');
-  
-  if (inputBusqueda) {
+
+  if (inputBusqueda && listaDocentes) {
     inputBusqueda.addEventListener('input', function(e) {
       const busqueda = e.target.value.toLowerCase().trim();
-      const tarjetas = listaDocentes.getElementsByClassName('col-md-4');
-      
-      Array.from(tarjetas).forEach(tarjeta => {
-        const nombreDocente = tarjeta.querySelector('.docente-nombre').textContent.toLowerCase();
-        const aula = tarjeta.querySelector('.docente-area').textContent.toLowerCase();
-        
+      // Seleccionar las columnas que contienen las tarjetas (tolerante a diferentes clases)
+      const tarjetas = listaDocentes.querySelectorAll('.col-md-4, .col-sm-6, .docente-card');
+
+      Array.from(tarjetas).forEach(tarjetaWrapper => {
+        // Si la tarjeta fue pasada directamente como .docente-card, buscar el wrapper col
+        let tarjeta = tarjetaWrapper.classList.contains('docente-card') ? tarjetaWrapper : tarjetaWrapper.querySelector('.docente-card') || tarjetaWrapper;
+
+        const nombreEl = tarjeta.querySelector('.docente-nombre');
+        const areaEl = tarjeta.querySelector('.docente-area');
+        const nombreDocente = nombreEl ? nombreEl.textContent.toLowerCase() : '';
+        const aula = areaEl ? areaEl.textContent.toLowerCase() : '';
+
         if (nombreDocente.includes(busqueda) || aula.includes(busqueda)) {
-          tarjeta.style.display = '';
+          // mostrar el elemento columna si existe, si no mostrar la tarjeta
+          if (tarjetaWrapper.style) tarjetaWrapper.style.display = '';
         } else {
-          tarjeta.style.display = 'none';
+          if (tarjetaWrapper.style) tarjetaWrapper.style.display = 'none';
         }
       });
     });
