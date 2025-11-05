@@ -26,8 +26,16 @@ function generarVistasDocentes() {
     $html = '<div class="container py-5">';
     $html .= '<h3 class="mb-4 text-center">Disponibilidad de Docentes</h3>';
     $html .= '<br>';
-    $html .= '<a href="logout.php" class="btn btn-danger mb-4">Cerrar Sesión</a>';
-    $html .= '<div class="row justify-content-center g-4">';
+    $html .= '<div class="d-flex justify-content-between align-items-center mb-4">';
+    $html .= '<a href="logout.php" class="btn btn-danger">Cerrar Sesión</a>';
+    $html .= '<div class="col-md-4">';
+    $html .= '<div class="input-group">';
+    $html .= '<span class="input-group-text"><i class="bi bi-search"></i></span>';
+    $html .= '<input type="text" class="form-control" id="buscarDocente" placeholder="Buscar docente...">';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '<div class="row justify-content-center g-4" id="listaDocentes">';
     
     $contador = 1;
     foreach ($docentes as $nombreCompleto => $datos) {
@@ -366,6 +374,7 @@ echo generarVistasDocentes();
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Disponibilidad de Docentes</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <style>
     body {
@@ -422,8 +431,8 @@ echo generarVistasDocentes();
     .status-red { background-color: #f8d7da; color: #721c24; }
 
     .btn-editar {
-      background-color: #28a745;
-      color: #fff;
+      background-color: #EF5350;
+      color: #ffd5af;
       border-radius: 10px;
       padding: 0.4rem 1rem;
       font-weight: 500;
@@ -436,7 +445,7 @@ echo generarVistasDocentes();
     }
 
     .btn-horario {
-      background-color: #0d6efd;
+      background-color: #EF5350;
       color: #fff;
       border-radius: 10px;
       padding: 0.4rem 1rem;
@@ -461,13 +470,13 @@ echo generarVistasDocentes();
     }
 
     .modal-header {
-      background-color: #0d6efd;
+      background-color: #EF5350;
       color: white;
       border-radius: 15px 15px 0 0;
     }
 
     .modal-header.editar {
-      background-color: #28a745;
+      background-color: #ffd5af;
     }
 
     .table {
@@ -476,7 +485,7 @@ echo generarVistasDocentes();
     }
 
     .table thead {
-      background-color: #0d6efd;
+      background-color: #EF5350;
       color: white;
     }
 
@@ -519,6 +528,29 @@ echo generarVistasDocentes();
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+  // Funcionalidad de búsqueda
+  const inputBusqueda = document.getElementById('buscarDocente');
+  const listaDocentes = document.getElementById('listaDocentes');
+  
+  if (inputBusqueda) {
+    inputBusqueda.addEventListener('input', function(e) {
+      const busqueda = e.target.value.toLowerCase().trim();
+      const tarjetas = listaDocentes.getElementsByClassName('col-md-4');
+      
+      Array.from(tarjetas).forEach(tarjeta => {
+        const nombreDocente = tarjeta.querySelector('.docente-nombre').textContent.toLowerCase();
+        const aula = tarjeta.querySelector('.docente-area').textContent.toLowerCase();
+        
+        if (nombreDocente.includes(busqueda) || aula.includes(busqueda)) {
+          tarjeta.style.display = '';
+        } else {
+          tarjeta.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // Lógica existente de días de la semana
   const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
   const hoy = new Date();
   const diaActual = diasSemana[hoy.getDay()];
