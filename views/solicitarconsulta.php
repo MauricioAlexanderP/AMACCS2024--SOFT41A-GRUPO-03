@@ -5,32 +5,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once dirname(__DIR__) . '/model/detalle.php';
-// Intenta cargar el modelo
-// //$path = dirname(__DIR__) . '/model/detalle.php';
-// echo "<p>Ruta detectada: <b>$path</b></p>";
-
-// if (file_exists($path)) {
-//     require_once $path;
-//     echo "<p style='color:green;'>✔ Archivo cargado correctamente</p>";
-// } else {
-//     echo "<p style='color:red;'>❌ No se encontró el archivo</p>";
-// }//
-
 
 $detalle = new Detalle();
-
-// Llamamos al método que genera el JSON
-if ($detalle->generarJSON()) {
-    echo "✔ Archivo JSON generado correctamente.";
-} else {
-    echo "❌ Error al generar el archivo JSON.";
-}
-
-$detalle = new Detalle();
+$detalle->generarJSON();
 $estados = $detalle->obtenerTodosLosEstados();
-
-// Luego en tu código, accede al estado así: 
-
 ?>
 
 <!DOCTYPE html>
@@ -39,15 +17,16 @@ $estados = $detalle->obtenerTodosLosEstados();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Consultas</title>
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+
 <style>
     :root {
-        --verde: #4CAF50;
-        --amarillo: #FFD54F;
-        --rojo: #EF5350;
-        --blanco: #FFFFFF;
+        --azul: #1976D2;
         --gris-text: #333;
-        --card-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        font-family: Arial, Helvetica, sans-serif;
     }
 
     body {
@@ -55,6 +34,7 @@ $estados = $detalle->obtenerTodosLosEstados();
         margin:0;
         padding:20px;
         color:var(--gris-text);
+        font-family: Arial, Helvetica, sans-serif;
     }
 
     .header {
@@ -67,10 +47,6 @@ $estados = $detalle->obtenerTodosLosEstados();
     .header h1 {
         font-size:24px;
         margin:0;
-    }
-
-    .header img {
-        height:40px;
     }
 
     .form-container {
@@ -102,68 +78,39 @@ $estados = $detalle->obtenerTodosLosEstados();
         min-height:80px;
     }
 
+    /* 🔹 Separar el botón del Select2 */
+    .select2-container {
+        margin-bottom: 20px !important;
+    }
+
     .form-container button {
-        background:#1976D2;
+        background:var(--azul);
         color:#fff;
         border:none;
         font-weight:600;
         cursor:pointer;
+        transition:background 0.3s;
     }
 
-    .grid {
-        display:grid;
-        grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-        gap:12px;
-        max-width:800px;
-        margin:0 auto;
+    .form-container button:hover {
+        background:#1565C0;
     }
 
-    .card {
-        padding:16px;
-        border-radius:8px;
-        box-shadow:var(--card-shadow);
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        height:120px;
-        font-weight:700;
-        font-size:16px;
-        color:#000;
+    h2 {
         text-align:center;
-        position:relative;
+        margin-bottom:12px;
     }
-
-    .card.blanco {background:var(--blanco); border:1px solid #ddd;}
-    .card.verde {background:var(--verde); color:#fff;}
-    .card.amarillo {background:var(--amarillo);}
-    .card.rojo {background:var(--rojo); color:#fff;}
-
-    .card span.status {
-        position:absolute;
-        top:10px;
-        right:10px;
-        font-size:12px;
-        font-weight:600;
-        padding:2px 6px;
-        border-radius:4px;
-        color:#fff;
-    }
-
-    .card.verde span.status {background:var(--verde);}
-    .card.amarillo span.status {background:var(--amarillo); color:#000;}
-    .card.rojo span.status {background:var(--rojo);}
 </style>
 </head>
 <body>
 
 <div class="header">
     <h1>Kiosko - Solicitud de Consulta</h1>
-    <img src="logo.png" alt="Logo">
+    <img src="logo.png" alt="Logo" style="height:40px;">
 </div>
 
 <div class="form-container">
-    <form>
+    <form id="formConsulta">
         <label for="carnet">Ingrese su Carnet:</label>
         <input type="text" id="carnet" name="carnet" placeholder="Ingrese su carné" required>
 
@@ -173,33 +120,37 @@ $estados = $detalle->obtenerTodosLosEstados();
         <label for="descripcion">Descripción de la consulta:</label>
         <textarea id="descripcion" name="descripcion" placeholder="Escriba aquí su consulta..." required></textarea>
 
+        <label for="docenteSelect">Seleccione un docente disponible:</label>
+        <select id="docenteSelect" name="docente" required>
+            <option value="">Cargando docentes disponibles...</option>
+        </select>
+
         <button type="submit">Enviar Solicitud</button>
     </form>
 </div>
 
-<h2 style="text-align:center; margin-bottom:12px;">Disponibilidad de docentes</h2>
 
-<div id="grid-docentes" class="grid"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 async function cargarDocentes() {
     try {
-        const response = await fetch('../config/detalles.json'); // ruta al JSON
+        const response = await fetch('../config/detalles.json');
         const datos = await response.json();
 
-        const grid = document.getElementById('grid-docentes');
-        grid.innerHTML = '';
+        const select = $('#docenteSelect');
+        select.empty();
 
         if (!Array.isArray(datos) || datos.length === 0) {
-            grid.innerHTML = '<p style="text-align:center;">No hay datos disponibles</p>';
+            select.append('<option value="">No hay docentes disponibles</option>');
             return;
         }
 
-        // 📅 Día actual (Ej: "Martes")
-        const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-        const hoy = dias[new Date().getDay()].toLowerCase();
+        const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+        const hoy = dias[new Date().getDay()];
 
-        // 🔹 Agrupar docentes por nombre completo
         const docentesPorNombre = {};
         datos.forEach(d => {
             const nombre = `${d.nombre_docente} ${d.apellido_docente}`.trim();
@@ -207,96 +158,66 @@ async function cargarDocentes() {
             docentesPorNombre[nombre].push(d);
         });
 
-        // 🔹 Buscar los que NO tienen clase hoy
         const disponiblesHoy = Object.entries(docentesPorNombre)
-            .filter(([nombre, clases]) => 
+            .filter(([nombre, clases]) =>
                 !clases.some(c => (c.dia || '').toLowerCase() === hoy)
             )
             .map(([nombre]) => nombre);
 
         if (disponiblesHoy.length === 0) {
-            grid.innerHTML = `<p style="text-align:center;">Todos los docentes tienen clases hoy (${hoy})</p>`;
-            return;
+            select.append('<option value="">No hay docentes disponibles hoy</option>');
+        } else {
+            select.append('<option value="">Seleccione un docente...</option>');
+            disponiblesHoy.forEach(nombre => {
+                select.append(`<option value="${nombre}">${nombre}</option>`);
+            });
         }
 
-        // 🔹 Crear tarjetas solo para los disponibles
-        disponiblesHoy.forEach(nombre => {
-            const card = document.createElement('div');
-            card.className = 'card verde';
-            card.innerHTML = `
-                <span class="status">Disponible</span>
-                ${nombre}
-                <button style="margin-top:10px; padding:6px 12px; border:none; border-radius:6px; background:#1976D2; color:#fff;">
-                    Seleccionar
-                </button>
-            `;
-            grid.appendChild(card);
+        select.select2({
+            placeholder: "Seleccione un docente...",
+            width: '100%'
         });
 
     } catch (error) {
         console.error('Error cargando JSON:', error);
+        $('#docenteSelect').html('<option value="">Error al cargar docentes</option>');
     }
 }
 
 document.addEventListener('DOMContentLoaded', cargarDocentes);
-</script>
 
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const diasSemana = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-  const hoy = new Date();
-  const diaActual = diasSemana[hoy.getDay()];
-  const horaActual = hoy.getHours();
+document.getElementById('formConsulta').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-  // Función para obtener el rango horario actual
-  function obtenerRangoHora(hora) {
-    if (hora >= 7 && hora < 8) return "7:00-8:00";
-    if (hora >= 8 && hora < 9) return "8:00-9:00";
-    if (hora >= 9 && hora < 10) return "9:00-10:00";
-    if (hora >= 10 && hora < 11) return "10:00-11:00";
-    if (hora >= 11 && hora < 12) return "11:00-12:00";
-    return null;
-  }
+    // Validar campos
+    const carnet = document.getElementById('carnet').value.trim();
+    const materia = document.getElementById('materia').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const docente = document.getElementById('docenteSelect').value;
 
-  const rango = obtenerRangoHora(horaActual);
-  if (!rango) return; // Fuera del horario lectivo
+    if (!carnet || !materia || !descripcion || !docente) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campos incompletos',
+            text: 'Por favor complete todos los campos antes de enviar.'
+        });
+        return;
+    }
 
-  // Recorre cada docente
-  document.querySelectorAll(".docente-card").forEach(card => {
-    const modalId = card.querySelector(".btn-horario").getAttribute("data-bs-target");
-    const tabla = document.querySelector(`${modalId} table`);
-    const filas = tabla.querySelectorAll("tbody tr");
-
-    let estaOcupado = false;
-
-    filas.forEach(fila => {
-      const hora = fila.querySelector(".hora-cell").textContent.trim();
-      if (hora === rango) {
-        const indiceDia = diasSemana.indexOf(diaActual);
-        if (indiceDia >= 1 && indiceDia <= 5) {
-          const celda = fila.children[indiceDia]; // Lunes=1 ... Viernes=5
-          if (celda.classList.contains("clase-ocupada")) {
-            estaOcupado = true;
-          }
-        }
-      }
+    // Muestra confirmación
+    Swal.fire({
+        icon: 'success',
+        title: 'Solicitud enviada',
+        text: 'Su solicitud ha sido enviada correctamente.',
+        confirmButtonColor: '#1976D2'
     });
 
-    const estado = card.querySelector(".status-badge");
-    if (estaOcupado) {
-      estado.textContent = "En clase";
-      estado.className = "status-badge status-red";
-    } else {
-      estado.textContent = "Disponible";
-      estado.className = "status-badge status-green";
-    }
-  });
+    // Limpia formulario
+    this.reset();
+    $('#docenteSelect').val(null).trigger('change');
 });
 </script>
 
-
 </body>
-</html> 
-
-<
+</html>

@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
         else{
-        header("Location: views/vistaDocente.php");
+        header("Location: views/vistaDocente.php"); 
         exit();
         }
   
