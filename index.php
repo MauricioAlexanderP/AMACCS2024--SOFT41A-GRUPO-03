@@ -4,11 +4,18 @@
  * Estilo adaptado al diseño del usuario (colores + logo)
  */
 
+    
+
 function generarVistasDocentes() {
     $jsonPath = __DIR__ . '/config/detalles.json';
     
     if (!file_exists($jsonPath)) {
         return '<div class="alert alert-danger">No se encontró el archivo de configuración.</div>';
+        
+
+
+
+
     }
     
     $jsonContent = file_get_contents($jsonPath);
