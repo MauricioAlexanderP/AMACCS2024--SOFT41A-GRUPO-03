@@ -230,7 +230,7 @@ class Detalle extends cn
       return $resultado !== false;
     }
 
-    // 🔹 Leer datos desde config/detalles.json
+    //  Leer datos desde config/detalles.json
 public function editarDisponibilidad($nombre_docente, $estado, $notas = '') {
         $ruta = __DIR__ . '/../config/detalles.json';
         
