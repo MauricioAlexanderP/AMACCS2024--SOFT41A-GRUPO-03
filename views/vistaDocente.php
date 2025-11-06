@@ -160,9 +160,10 @@ function generarModalEditar($nombreCompleto, $detalles, $id) {
     $html .= '<label for="estado' . $id . '" class="form-label">Estado de Disponibilidad:</label>';
     $html .= '<select class="form-select" id="estado' . $id . '" name="estado" required>';
     $html .= '<option value="disponible" selected>Disponible</option>';
+    $html .= '<option value="ocupado">En Clases</option>';
+    $html .= '<option value="revisando">Disponible</option>';
     $html .= '<option value="reunion">En reunión</option>';
-    $html .= '<option value="laboratorio">En Clases</option>';
-    $html .= '<option value="almuerzo">Ausente</option>';
+    $html .= '<option value="laboratorio">Ausente</option>';
     $html .= '</select>';
     $html .= '</div>';
     $html .= '<div class="d-flex justify-content-end gap-2">';
