@@ -10,8 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $con->real_escape_string($_POST['usuario']);
     $password = $con->real_escape_string($_POST['password']);
 
-    // Consulta del docente con usuario y contraseña
-    $sql = "SELECT * FROM docente WHERE nom_usuario = '$usuario' AND ape_usuario = '$password'";
+  // Consulta del docente con usuario y contraseña (usar campo passbreve)
+  $sql = "SELECT * FROM docente WHERE nom_usuario = '$usuario' AND passbreve = '$password'";
 
     $result = $con->query($sql);
 
@@ -20,15 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['id_docente'] = $docente['id_docente'];
         $_SESSION['nombre'] = $docente['nom_usuario'];
         $_SESSION['apellido'] = $docente['ape_usuario'];
+        $_SESSION['pass'] = $docente['passbreve'];
 
-        // Redirigir al docente
-        if ($docente['nom_usuario'] == 'kiosko' && $docente['ape_usuario'] == 'itcaSA') {
+       
+        //redirigir al usuario segun su rol
+        if ($docente['nom_usuario'] == 'kiosko' && $docente['passbreve'] == 'itcaSA') {
             header("Location: views/solicitarconsulta.php");
             exit();
         }
-        else{
-        header("Location: views/vistaDocente.php"); 
-        exit();
+        elseif ($docente['nom_usuario'] == 'Rafael' && $docente['passbreve'] == 'pass26') {
+            header("Location: views/vistaDocente.php");
+            exit();
+        }
+        else {
+            header("Location: index.php");
+            exit();
         }
   
     }
