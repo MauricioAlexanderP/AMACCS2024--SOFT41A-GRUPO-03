@@ -19,6 +19,8 @@ $estados = $detalle->obtenerTodosLosEstados();
 <title>Consultas</title>
 
 
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
@@ -100,6 +102,25 @@ $estados = $detalle->obtenerTodosLosEstados();
         text-align:center;
         margin-bottom:12px;
     }
+
+        /* Styles para tarjetas similar a verDisponibilidad */
+        .docente-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .docente-card:hover { transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .docente-img { width:100%; height:180px; object-fit:cover; }
+        .docente-body { padding: 1rem 1.2rem; text-align:center; }
+        .docente-nombre { font-size:1.1rem; font-weight:600; color:#333; }
+        .docente-area { font-size:0.95rem; color:#6c757d; margin-bottom:0.5rem; }
+        .status-badge { display:inline-block; padding:0.35rem 0.75rem; border-radius:20px; font-size:0.8rem; font-weight:600; }
+        .status-green { background-color:#d4edda; color:#155724; }
+        .status-yellow { background-color:#fff3cd; color:#856404; }
+        .status-red { background-color:#f8d7da; color:#721c24; }
 </style>
 </head>
 <body>
@@ -109,28 +130,91 @@ $estados = $detalle->obtenerTodosLosEstados();
     <img src="logo.png" alt="Logo" style="height:40px;">
 </div>
 
-<div class="form-container">
-    <form id="formConsulta">
-        <label for="carnet">Ingrese su Carnet:</label>
-        <input type="text" id="carnet" name="carnet" placeholder="Ingrese su carné" required>
+<!-- Cards de docentes (similar a verDisponibilidad) -->
+<?php
+        $jsonPath = __DIR__ . '/../config/detalles.json';
+        $cardsHtml = '';
+        if (file_exists($jsonPath)) {
+                $jsonContent = file_get_contents($jsonPath);
+                $detalles = json_decode($jsonContent, true);
+                if (is_array($detalles) && count($detalles) > 0) {
+                        // Agrupar por docente
+                        $docentes = [];
+                        foreach ($detalles as $d) {
+                                $nombre = trim(($d['nombre_docente'] ?? '') . ' ' . ($d['apellido_docente'] ?? ''));
+                                if ($nombre === '') continue;
+                                if (!isset($docentes[$nombre])) $docentes[$nombre] = [];
+                                $docentes[$nombre][] = $d;
+                        }
 
-        <label for="materia">Materia a consultar:</label>
-        <input type="text" id="materia" name="materia" placeholder="Ej: Matemáticas" required>
+                        $cardsHtml .= '<div class="container py-4">';
+                        $cardsHtml .= '<h3 class="mb-4 text-center">Docentes disponibles</h3>';
+                        $cardsHtml .= '<div class="row justify-content-center g-4">';
+                        $rnd = 1;
+                        foreach ($docentes as $nombre => $list) {
+                                $prim = $list[0];
+                                $estado = $prim['estado_disponibilidad'] ?? ($prim['estado'] ?? 'disponible');
+                                $aula = $prim['aula'] ?? '';
+                                $estadoCls = 'status-green';
+                                $estadoLabel = 'Disponible';
+                                if ($estado === 'ocupado') { $estadoCls = 'status-red'; $estadoLabel = 'Atendiendo estudiante'; }
+                                if ($estado === 'revisando' || $estado === 'reunion' || $estado === 'laboratorio') { $estadoCls = 'status-yellow'; $estadoLabel = ucfirst($estado); }
 
-        <label for="descripcion">Descripción de la consulta:</label>
-        <textarea id="descripcion" name="descripcion" placeholder="Escriba aquí su consulta..." required></textarea>
+                                $cardsHtml .= '<div class="col-md-4 col-sm-6">';
+                                $cardsHtml .= '<div class="docente-card">';
+                                $cardsHtml .= '<img src="https://picsum.photos/400/200?random=' . $rnd . '" alt="Docente" class="docente-img">';
+                                $cardsHtml .= '<div class="docente-body">';
+                                $cardsHtml .= '<p class="docente-nombre">' . htmlspecialchars($nombre) . '</p>';
+                                $cardsHtml .= '<p class="docente-area">Área: ' . htmlspecialchars($aula) . '</p>';
+                                $cardsHtml .= '<span class="status-badge ' . $estadoCls . '">' . $estadoLabel . '</span>';
+                                $cardsHtml .= '<div class="mt-3">';
+                                if (strtolower($estado) === 'disponible') {
+                                    $cardsHtml .= '<button class="btn btn-primary btn-solicitar" data-docente="' . htmlspecialchars($nombre) . '" data-estado="' . htmlspecialchars($estado) . '" data-bs-toggle="modal" data-bs-target="#solicitarModal">Solicitar</button>';
+                                } else {
+                                    // Mostrar botón no habilitado cuando el docente no está disponible
+                                    $cardsHtml .= '<button class="btn btn-secondary" disabled data-docente="' . htmlspecialchars($nombre) . '" data-estado="' . htmlspecialchars($estado) . '">No disponible</button>';
+                                }
+                                $cardsHtml .= '</div></div></div></div>';
+                                $rnd++;
+                        }
+                        $cardsHtml .= '</div></div>';
+                }
+        }
+        echo $cardsHtml;
+?>
 
-        <label for="docenteSelect">Seleccione un docente disponible:</label>
-        <select id="docenteSelect" name="docente" required>
-            <option value="">Cargando docentes disponibles...</option>
-        </select>
+<!-- Modal con el formulario para solicitar consulta -->
+<div class="modal fade" id="solicitarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#1976D2;color:#fff;">
+                <h5 class="modal-title">Solicitar Consulta</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-container">
+                        <form id="formConsulta">
+                                <input type="hidden" id="docenteInput" name="docente">
+                                <label for="carnet">Ingrese su Carnet:</label>
+                                <input type="text" id="carnet" name="carnet" placeholder="Ingrese su carné" required>
 
-        <button type="submit">Enviar Solicitud</button>
-    </form>
+                                <label for="materia">Materia a consultar:</label>
+                                <input type="text" id="materia" name="materia" placeholder="Ej: Matemáticas" required>
+
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-success">Enviar Solicitud</button>
+                                </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -142,6 +226,8 @@ async function cargarDocentes() {
 
         const select = $('#docenteSelect');
         select.empty();
+            // Si no existe el select (ahora usamos cards + modal), no hacer nada
+            if (typeof $ === 'function' && select.length === 0) return;
 
         if (!Array.isArray(datos) || datos.length === 0) {
             select.append('<option value="">No hay docentes disponibles</option>');
@@ -180,21 +266,34 @@ async function cargarDocentes() {
 
     } catch (error) {
         console.error('Error cargando JSON:', error);
-        $('#docenteSelect').html('<option value="">Error al cargar docentes</option>');
+        if (typeof $ === 'function' && $('#docenteSelect').length) {
+            $('#docenteSelect').html('<option value="">Error al cargar docentes</option>');
+        }
     }
 }
 
-document.addEventListener('DOMContentLoaded', cargarDocentes);
+document.addEventListener('DOMContentLoaded', function(){
+    cargarDocentes();
 
+    // Cuando se hace click en Solicitar, prefijar el docente en el formulario modal
+    document.querySelectorAll('.btn-solicitar').forEach(btn => {
+        btn.addEventListener('click', function(){
+            const nombre = this.getAttribute('data-docente') || '';
+            document.getElementById('docenteInput').value = nombre;
+            // actualizar título del modal
+            const modalTitle = document.querySelector('#solicitarModal .modal-title');
+            if(modalTitle) modalTitle.textContent = 'Solicitar Consulta - ' + nombre;
+        });
+    });
 
-document.getElementById('formConsulta').addEventListener('submit', function(e) {
+    document.getElementById('formConsulta').addEventListener('submit', function(e) {
     e.preventDefault();
 
     // Validar campos
     const carnet = document.getElementById('carnet').value.trim();
     const materia = document.getElementById('materia').value.trim();
     const descripcion = document.getElementById('descripcion').value.trim();
-    const docente = document.getElementById('docenteSelect').value;
+    const docente = (document.getElementById('docenteInput') && document.getElementById('docenteInput').value) || (document.getElementById('docenteSelect') && document.getElementById('docenteSelect').value) || '';
 
     if (!carnet || !materia || !descripcion || !docente) {
         Swal.fire({
@@ -213,9 +312,16 @@ document.getElementById('formConsulta').addEventListener('submit', function(e) {
         confirmButtonColor: '#1976D2'
     });
 
+    // Cerrar modal
+    try {
+      const modalEl = document.getElementById('solicitarModal');
+      const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+      modal.hide();
+    } catch(e) {}
+
     // Limpia formulario
     this.reset();
-    $('#docenteSelect').val(null).trigger('change');
+})
 });
 </script>
 
