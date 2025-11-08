@@ -50,7 +50,7 @@
     {
         "id_detalle": "7",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "102",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -74,7 +74,7 @@
     {
         "id_detalle": "8",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "102",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -98,7 +98,7 @@
     {
         "id_detalle": "9",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "07:00:00",
         "hf": "07:50:00",
@@ -122,7 +122,7 @@
     {
         "id_detalle": "10",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -146,7 +146,7 @@
     {
         "id_detalle": "11",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -170,7 +170,7 @@
     {
         "id_detalle": "12",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -194,7 +194,7 @@
     {
         "id_detalle": "13",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -218,7 +218,7 @@
     {
         "id_detalle": "14",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -434,7 +434,7 @@
     {
         "id_detalle": "23",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "102",
         "ha": "14:40:00",
         "hf": "15:30:00",
@@ -458,7 +458,7 @@
     {
         "id_detalle": "24",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "102",
         "ha": "15:30:00",
         "hf": "16:20:00",
@@ -626,7 +626,7 @@
     {
         "id_detalle": "31",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "PLC",
         "ha": "07:00:00",
         "hf": "07:50:00",
@@ -650,7 +650,7 @@
     {
         "id_detalle": "32",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "PLC",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -674,7 +674,7 @@
     {
         "id_detalle": "33",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "PLC",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -698,7 +698,7 @@
     {
         "id_detalle": "34",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "PLC",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -722,7 +722,7 @@
     {
         "id_detalle": "35",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "PLC",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -746,7 +746,7 @@
     {
         "id_detalle": "36",
         "nombre_docente": "Edgar",
-        "apellido_docente": "Martínez",
+        "apellido_docente": "Martinez",
         "aula": "PLC",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -770,7 +770,7 @@
     {
         "id_detalle": "37",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "Virtual1",
         "ha": "13:00:00",
         "hf": "13:50:00",
@@ -794,7 +794,7 @@
     {
         "id_detalle": "38",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "Virtual1",
         "ha": "13:50:00",
         "hf": "14:40:00",
@@ -866,7 +866,7 @@
     {
         "id_detalle": "43",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "103",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -890,7 +890,7 @@
     {
         "id_detalle": "44",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "103",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -1346,7 +1346,7 @@
     {
         "id_detalle": "70",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -1370,7 +1370,7 @@
     {
         "id_detalle": "71",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -1394,7 +1394,7 @@
     {
         "id_detalle": "72",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -1418,7 +1418,7 @@
     {
         "id_detalle": "73",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "07:00:00",
         "hf": "07:50:00",
@@ -1442,7 +1442,7 @@
     {
         "id_detalle": "74",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -1466,7 +1466,7 @@
     {
         "id_detalle": "75",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -1490,7 +1490,7 @@
     {
         "id_detalle": "76",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -1514,7 +1514,7 @@
     {
         "id_detalle": "77",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -1538,7 +1538,7 @@
     {
         "id_detalle": "78",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -1562,7 +1562,7 @@
     {
         "id_detalle": "79",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "103",
         "ha": "13:00:00",
         "hf": "13:50:00",
@@ -1586,7 +1586,7 @@
     {
         "id_detalle": "80",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "103",
         "ha": "13:50:00",
         "hf": "14:40:00",
@@ -1706,7 +1706,7 @@
     {
         "id_detalle": "85",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "07:00:00",
         "hf": "07:50:00",
@@ -1730,7 +1730,7 @@
     {
         "id_detalle": "86",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -1754,7 +1754,7 @@
     {
         "id_detalle": "87",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -1778,7 +1778,7 @@
     {
         "id_detalle": "88",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -1802,7 +1802,7 @@
     {
         "id_detalle": "89",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -1826,7 +1826,7 @@
     {
         "id_detalle": "90",
         "nombre_docente": "Joel",
-        "apellido_docente": "Cerén",
+        "apellido_docente": "CerÃ©n",
         "aula": "TALLER2",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -1850,7 +1850,7 @@
     {
         "id_detalle": "91",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "07:00:00",
         "hf": "07:50:00",
@@ -1874,7 +1874,7 @@
     {
         "id_detalle": "92",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -1898,7 +1898,7 @@
     {
         "id_detalle": "93",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -1922,7 +1922,7 @@
     {
         "id_detalle": "94",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -1946,7 +1946,7 @@
     {
         "id_detalle": "95",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -1970,7 +1970,7 @@
     {
         "id_detalle": "96",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "CC4",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -2090,7 +2090,7 @@
     {
         "id_detalle": "113",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "C102",
         "ha": "13:00:00",
         "hf": "13:50:00",
@@ -2114,7 +2114,7 @@
     {
         "id_detalle": "114",
         "nombre_docente": "Gloria",
-        "apellido_docente": "Hernández",
+        "apellido_docente": "HernÃ¡ndez",
         "aula": "C102",
         "ha": "13:50:00",
         "hf": "14:40:00",
@@ -2186,7 +2186,7 @@
     {
         "id_detalle": "136",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "103",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -2210,7 +2210,7 @@
     {
         "id_detalle": "137",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "103",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -2234,7 +2234,7 @@
     {
         "id_detalle": "138",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "Virtual1",
         "ha": "13:00:00",
         "hf": "13:50:00",
@@ -2258,7 +2258,7 @@
     {
         "id_detalle": "139",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "Virtual1",
         "ha": "13:50:00",
         "hf": "14:40:00",
@@ -2378,7 +2378,7 @@
     {
         "id_detalle": "144",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "Virtual2",
         "ha": "14:40:00",
         "hf": "15:30:00",
@@ -2402,7 +2402,7 @@
     {
         "id_detalle": "145",
         "nombre_docente": "Marvin",
-        "apellido_docente": "Martínez Fuentes",
+        "apellido_docente": "Martinez Fuentes",
         "aula": "Virtual2",
         "ha": "15:30:00",
         "hf": "16:20:00",
@@ -2570,7 +2570,7 @@
     {
         "id_detalle": "152",
         "nombre_docente": "Walter",
-        "apellido_docente": "Góchez",
+        "apellido_docente": "GÃ³chez",
         "aula": "C104",
         "ha": "07:00:00",
         "hf": "07:50:00",
@@ -2594,7 +2594,7 @@
     {
         "id_detalle": "153",
         "nombre_docente": "Walter",
-        "apellido_docente": "Góchez",
+        "apellido_docente": "GÃ³chez",
         "aula": "C104",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -2618,7 +2618,7 @@
     {
         "id_detalle": "154",
         "nombre_docente": "Walter",
-        "apellido_docente": "Góchez",
+        "apellido_docente": "GÃ³chez",
         "aula": "C104",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -2642,7 +2642,7 @@
     {
         "id_detalle": "155",
         "nombre_docente": "Walter",
-        "apellido_docente": "Góchez",
+        "apellido_docente": "GÃ³chez",
         "aula": "C104",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -2666,7 +2666,7 @@
     {
         "id_detalle": "156",
         "nombre_docente": "Walter",
-        "apellido_docente": "Góchez",
+        "apellido_docente": "GÃ³chez",
         "aula": "C104",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -2689,7 +2689,7 @@
     },
     {
         "id_detalle": "157",
-        "nombre_docente": "Miguel",
+        "nombre_docente": "Miguel ",
         "apellido_docente": "Calidonio",
         "aula": "C104",
         "ha": "13:00:00",
@@ -2713,7 +2713,7 @@
     },
     {
         "id_detalle": "158",
-        "nombre_docente": "Miguel",
+        "nombre_docente": "Miguel ",
         "apellido_docente": "Calidonio",
         "aula": "C104",
         "ha": "13:50:00",
@@ -2737,8 +2737,8 @@
     },
     {
         "id_detalle": "159",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -2761,8 +2761,8 @@
     },
     {
         "id_detalle": "160",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -2785,8 +2785,8 @@
     },
     {
         "id_detalle": "161",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -2809,8 +2809,8 @@
     },
     {
         "id_detalle": "162",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -2833,8 +2833,8 @@
     },
     {
         "id_detalle": "163",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "13:00:00",
         "hf": "13:50:00",
@@ -2857,8 +2857,8 @@
     },
     {
         "id_detalle": "164",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "13:50:00",
         "hf": "14:40:00",
@@ -2881,8 +2881,8 @@
     },
     {
         "id_detalle": "165",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "14:40:00",
         "hf": "15:30:00",
@@ -2905,8 +2905,8 @@
     },
     {
         "id_detalle": "166",
-        "nombre_docente": "María Lorena",
-        "apellido_docente": "Rodríguez García",
+        "nombre_docente": "MarÃ­a Lorena",
+        "apellido_docente": "RodrÃ­guez GarcÃ­a",
         "aula": "CC4",
         "ha": "15:30:00",
         "hf": "16:20:00",
@@ -3193,7 +3193,7 @@
     },
     {
         "id_detalle": "178",
-        "nombre_docente": "José",
+        "nombre_docente": "JosÃ©",
         "apellido_docente": "Bonilla",
         "aula": "102",
         "ha": "07:00:00",
@@ -3217,7 +3217,7 @@
     },
     {
         "id_detalle": "179",
-        "nombre_docente": "José",
+        "nombre_docente": "JosÃ©",
         "apellido_docente": "Bonilla",
         "aula": "102",
         "ha": "07:50:00",
@@ -3241,7 +3241,7 @@
     },
     {
         "id_detalle": "180",
-        "nombre_docente": "José",
+        "nombre_docente": "JosÃ©",
         "apellido_docente": "Bonilla",
         "aula": "102",
         "ha": "09:00:00",
@@ -3265,7 +3265,7 @@
     },
     {
         "id_detalle": "181",
-        "nombre_docente": "José",
+        "nombre_docente": "JosÃ©",
         "apellido_docente": "Bonilla",
         "aula": "102",
         "ha": "09:50:00",
@@ -3289,7 +3289,7 @@
     },
     {
         "id_detalle": "182",
-        "nombre_docente": "José",
+        "nombre_docente": "JosÃ©",
         "apellido_docente": "Bonilla",
         "aula": "102",
         "ha": "10:40:00",
@@ -3506,7 +3506,7 @@
     {
         "id_detalle": "194",
         "nombre_docente": "Kevin",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "C102",
         "ha": "11:30:00",
         "hf": "12:20:00",
@@ -3530,7 +3530,7 @@
     {
         "id_detalle": "195",
         "nombre_docente": "Kevin",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "C102",
         "ha": "13:00:00",
         "hf": "13:50:00",
@@ -3554,7 +3554,7 @@
     {
         "id_detalle": "196",
         "nombre_docente": "Kevin",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "C102",
         "ha": "13:50:00",
         "hf": "14:40:00",
@@ -3578,7 +3578,7 @@
     {
         "id_detalle": "197",
         "nombre_docente": "Kevin",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "C102",
         "ha": "14:40:00",
         "hf": "15:30:00",
@@ -3602,7 +3602,7 @@
     {
         "id_detalle": "198",
         "nombre_docente": "Kevin",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "C102",
         "ha": "15:30:00",
         "hf": "16:20:00",
@@ -4010,7 +4010,7 @@
     {
         "id_detalle": "215",
         "nombre_docente": "Herleny",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "102",
         "ha": "07:00:00",
         "hf": "07:50:00",
@@ -4034,7 +4034,7 @@
     {
         "id_detalle": "216",
         "nombre_docente": "Herleny",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "102",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -4058,7 +4058,7 @@
     {
         "id_detalle": "217",
         "nombre_docente": "Herleny",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "102",
         "ha": "09:00:00",
         "hf": "09:50:00",
@@ -4082,7 +4082,7 @@
     {
         "id_detalle": "218",
         "nombre_docente": "Herleny",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "102",
         "ha": "09:50:00",
         "hf": "10:40:00",
@@ -4106,7 +4106,7 @@
     {
         "id_detalle": "219",
         "nombre_docente": "Herleny",
-        "apellido_docente": "Ágreda",
+        "apellido_docente": "Ãgreda",
         "aula": "102",
         "ha": "10:40:00",
         "hf": "11:30:00",
@@ -4218,10 +4218,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 22:15:00",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "224",
@@ -4242,10 +4242,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 22:15:00",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "225",
@@ -4266,10 +4266,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 22:15:00",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "226",
@@ -4290,10 +4290,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 22:15:00",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "227",
@@ -4314,14 +4314,14 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 22:15:00",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "228",
-        "nombre_docente": "José",
+        "nombre_docente": "JosÃ©",
         "apellido_docente": "Bonilla",
         "aula": "C104",
         "ha": "13:00:00",
@@ -4345,7 +4345,7 @@
     },
     {
         "id_detalle": "229",
-        "nombre_docente": "José",
+        "nombre_docente": "JosÃ©",
         "apellido_docente": "Bonilla",
         "aula": "C104",
         "ha": "13:50:00",
@@ -4754,7 +4754,7 @@
     {
         "id_detalle": "846",
         "nombre_docente": "Walter",
-        "apellido_docente": "Góchez",
+        "apellido_docente": "GÃ³chez",
         "aula": "C105",
         "ha": "07:50:00",
         "hf": "08:40:00",
@@ -4778,7 +4778,7 @@
     {
         "id_detalle": "847",
         "nombre_docente": "Walter",
-        "apellido_docente": "Góchez",
+        "apellido_docente": "GÃ³chez",
         "aula": "C105",
         "ha": "09:00:00",
         "hf": "09:50:00",
