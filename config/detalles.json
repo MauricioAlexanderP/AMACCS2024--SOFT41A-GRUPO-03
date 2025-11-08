@@ -18,10 +18,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43199314102II2024LunesELEC21U1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "4",
@@ -42,10 +42,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43199314102II2024LunesELEC21U1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "7",
@@ -258,10 +258,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "16",
@@ -282,10 +282,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "17",
@@ -306,10 +306,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "18",
@@ -330,10 +330,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "19",
@@ -354,10 +354,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "20",
@@ -378,10 +378,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "disponible",
+        "estado_disponibilidad": "ocupado",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
-        "estado": "disponible"
+        "fecha_actualizacion": "2025-11-08 16:17:18",
+        "estado": "ocupado"
     },
     {
         "id_detalle": "21",

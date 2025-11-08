@@ -127,7 +127,7 @@ $estados = $detalle->obtenerTodosLosEstados();
 
 <div class="header">
     <h1>Kiosko - Solicitud de Consulta</h1>
-    <img src="logo.png" alt="Logo" style="height:40px;">
+    <img src="../img/logo.png" alt="Logo" style="height:40px;">
 </div>
 
 <!-- Cards de docentes (similar a verDisponibilidad) -->
