@@ -1,0 +1,13 @@
+{
+    "name": "itca/sistema-consultas",
+    "description": "Sistema de consultas para docentes ITCA",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
