@@ -131,6 +131,66 @@ $estados = $detalle->obtenerTodosLosEstados();
             padding: 1rem 1.2rem;
             text-align: center;
         }
+<script>
+document.getElementById('formConsulta').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const carnet = document.getElementById('carnet').value.trim();
+    const materia = document.getElementById('materia').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const docente = document.getElementById('docenteSelect').value;
+
+    if (!carnet || !materia || !descripcion || !docente) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campos incompletos',
+            text: 'Por favor complete todos los campos antes de enviar.'
+        });
+        return;
+    }
+
+ 
+    const resp = await fetch('../controller/buscarAlumno.php?carnet=' + carnet);
+    const data = await resp.json();
+
+    if (!data.apellido) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Carnet inválido',
+            text: 'No existe un alumno con ese carnet.'
+        });
+        return;
+    }
+
+    const apellido = data.apellido;
+    const docenteNombre = docente;
+
+  
+    const mensaje = new SpeechSynthesisUtterance(
+        `Estudiante ${apellido} solicita al docente ${docenteNombre}.`
+    );
+    mensaje.lang = "es-ES";
+    speechSynthesis.speak(mensaje);
+
+   
+    Swal.fire({
+        icon: 'success',
+        title: 'Solicitud enviada',
+        text: `Estudiante ${apellido} ha solicitado al docente ${docenteNombre}.`,
+        confirmButtonColor: '#1976D2'
+    });
+
+  
+    this.reset();
+    $('#docenteSelect').val(null).trigger('change');
+});
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         .docente-nombre {
             font-size: 1.1rem;
