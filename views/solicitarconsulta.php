@@ -166,7 +166,7 @@ $estados = $detalle->obtenerTodosLosEstados();
                                 $cardsHtml .= '<div class="docente-body">';
                                 $cardsHtml .= '<p class="docente-nombre">' . htmlspecialchars($nombre) . '</p>';
                                 
-                                $cardsHtml .= '<span class="status-badge ' . $estadoCls . '">' . $estadoLabel . '</span>';
+                                $cardsHtml .= '<span class="status-badge ' . $estadoCls . '" data-docente="' . htmlspecialchars($nombre) . '">' . $estadoLabel . '</span>';
                                 $cardsHtml .= '<div class="mt-3">';
                                 if (strtolower($estado) === 'disponible') {
                                     $cardsHtml .= '<button class="btn btn-primary btn-solicitar" data-docente="' . htmlspecialchars($nombre) . '" data-estado="' . htmlspecialchars($estado) . '" data-bs-toggle="modal" data-bs-target="#solicitarModal">Solicitar</button>';
@@ -323,6 +323,54 @@ document.addEventListener('DOMContentLoaded', function(){
     this.reset();
 })
 });
+</script>
+
+<!-- SSE client: escucha cambios en views/sse.php y actualiza badges/botones en tiempo real -->
+<script>
+(function(){
+    if (typeof EventSource === 'undefined') return;
+    try {
+    const es = new EventSource('../scripts/sse.php');
+        const classMap = {
+            'disponible': 'status-green',
+            'ocupado': 'status-red'
+        };
+        es.onmessage = function(e){
+            try {
+                const datos = JSON.parse(e.data || '{}');
+                Object.keys(datos).forEach(function(nombre){
+                    const info = datos[nombre] || {};
+                    const estado = (info.estado || '').toLowerCase();
+                    // actualizar badges
+                    document.querySelectorAll('.status-badge').forEach(function(b){
+                        if (b.getAttribute('data-docente') === nombre) {
+                            const label = (estado === 'ocupado') ? 'Atendiendo estudiante' : (estado === 'disponible' ? 'Disponible' : (estado ? estado.charAt(0).toUpperCase()+estado.slice(1) : 'Desconocido'));
+                            b.textContent = label;
+                            b.className = 'status-badge ' + (classMap[estado] || 'status-yellow');
+                        }
+                    });
+                    // actualizar botones
+                    document.querySelectorAll('button[data-docente]').forEach(function(btn){
+                        if (btn.getAttribute('data-docente') === nombre) {
+                            if (estado === 'disponible') {
+                                btn.disabled = false;
+                                btn.classList.remove('btn-secondary');
+                                btn.classList.add('btn-primary');
+                                btn.setAttribute('data-estado','disponible');
+                            } else {
+                                btn.disabled = true;
+                                btn.classList.remove('btn-primary');
+                                btn.classList.add('btn-secondary');
+                                btn.setAttribute('data-estado', estado || 'no-disponible');
+                            }
+                        }
+                    });
+                });
+            } catch(err){ console.error('SSE JSON parse error', err); }
+        };
+        es.onerror = function(){ /* navegador reconectará automáticamente */ };
+    } catch(e){ console.error('SSE init error', e); }
+})();
 </script>
 
 </body>

@@ -18,10 +18,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43199314102II2024LunesELEC21U1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "4",
@@ -42,10 +42,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43199314102II2024LunesELEC21U1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "7",
@@ -68,7 +68,7 @@
         "cod_alldetalle": "44199316102II2024LunesELEC21U1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
@@ -92,7 +92,7 @@
         "cod_alldetalle": "44199316102II2024LunesELEC21U1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
@@ -258,10 +258,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "16",
@@ -282,10 +282,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "17",
@@ -306,10 +306,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43201314CC4II2024MartesELEC21B1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "18",
@@ -330,10 +330,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "19",
@@ -354,10 +354,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "20",
@@ -378,10 +378,10 @@
         "comentarioreserva": "",
         "carnetusuario": "2195",
         "cod_alldetalle": "43200314CC4II2024MartesELEC21A1v320240722202411152195",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 16:17:18",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-08 16:28:22",
+        "estado": "disponible"
     },
     {
         "id_detalle": "21",
@@ -644,7 +644,7 @@
         "cod_alldetalle": "44201316PLCII2024MiercolesELEC21B1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
@@ -668,7 +668,7 @@
         "cod_alldetalle": "44201316PLCII2024MiercolesELEC21B1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
@@ -692,7 +692,7 @@
         "cod_alldetalle": "44201316PLCII2024MiercolesELEC21B1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
@@ -716,7 +716,7 @@
         "cod_alldetalle": "44200316PLCII2024MiercolesELEC21A1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
@@ -740,7 +740,7 @@
         "cod_alldetalle": "44200316PLCII2024MiercolesELEC21A1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
@@ -764,7 +764,7 @@
         "cod_alldetalle": "44200316PLCII2024MiercolesELEC21A1v320240722202411152195",
         "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "",
+        "fecha_actualizacion": "2025-11-08 16:27:29",
         "estado": "disponible"
     },
     {
