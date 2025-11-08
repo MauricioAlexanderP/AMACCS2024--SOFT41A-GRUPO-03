@@ -165,7 +165,7 @@ $estados = $detalle->obtenerTodosLosEstados();
                                 $cardsHtml .= '<img src="https://picsum.photos/400/200?random=' . $rnd . '" alt="Docente" class="docente-img">';
                                 $cardsHtml .= '<div class="docente-body">';
                                 $cardsHtml .= '<p class="docente-nombre">' . htmlspecialchars($nombre) . '</p>';
-                                $cardsHtml .= '<p class="docente-area">Área: ' . htmlspecialchars($aula) . '</p>';
+                                
                                 $cardsHtml .= '<span class="status-badge ' . $estadoCls . '">' . $estadoLabel . '</span>';
                                 $cardsHtml .= '<div class="mt-3">';
                                 if (strtolower($estado) === 'disponible') {
