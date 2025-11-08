@@ -4218,10 +4218,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 22:15:00",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-09 00:17:15",
+        "estado": "disponible"
     },
     {
         "id_detalle": "224",
@@ -4242,10 +4242,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 22:15:00",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-09 00:17:15",
+        "estado": "disponible"
     },
     {
         "id_detalle": "225",
@@ -4266,10 +4266,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 22:15:00",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-09 00:17:15",
+        "estado": "disponible"
     },
     {
         "id_detalle": "226",
@@ -4290,10 +4290,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 22:15:00",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-09 00:17:15",
+        "estado": "disponible"
     },
     {
         "id_detalle": "227",
@@ -4314,10 +4314,10 @@
         "comentarioreserva": "",
         "carnetusuario": "3192",
         "cod_alldetalle": "66220294C104IV2024MartesPAT 41U1v320240722202411153192",
-        "estado_disponibilidad": "ocupado",
+        "estado_disponibilidad": "disponible",
         "notas_disponibilidad": "",
-        "fecha_actualizacion": "2025-11-08 22:15:00",
-        "estado": "ocupado"
+        "fecha_actualizacion": "2025-11-09 00:17:15",
+        "estado": "disponible"
     },
     {
         "id_detalle": "228",
