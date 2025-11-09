@@ -32,8 +32,8 @@ return [
   'SMTP_PASSWORD' => 'wlmc tssu wlhk hyse', // ⬅️ CAMBIAR: Contraseña de aplicación de 16 caracteres
   'SMTP_SECURE' => 'tls', // tls o ssl
 
-  // Remitente
-  'FROM_EMAIL' => 'noreply@itca.edu.sv',
+  // Remitente (debe coincidir con SMTP_USERNAME para Gmail)
+  'FROM_EMAIL' => 'peremauricio99@gmail.com',
   'FROM_NAME' => 'Sistema de Consultas ITCA',
 
   // Correo de prueba (docente)

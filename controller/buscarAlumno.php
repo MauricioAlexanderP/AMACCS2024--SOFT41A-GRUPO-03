@@ -1,20 +1,53 @@
 <?php
-require_once dirname(__DIR__) . '/config/cn.php';
+header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-if (!isset($_GET['carnet'])) {
-    echo json_encode(["error" => "No se recibió carnet"]);
-    exit;
+// Verificar que sea GET
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+  echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+  exit;
 }
 
-$carnet = $_GET['carnet'];
+// Obtener carnet
+$carnet = $_GET['carnet'] ?? '';
 
-$cn = new cn();
-$sql = "SELECT apellido FROM alumno WHERE carnet = '$carnet' LIMIT 1";
-$res = $cn->consulta($sql);
+if (empty($carnet)) {
+  echo json_encode(['success' => false, 'message' => 'Carnet requerido']);
+  exit;
+}
 
-if ($res->num_rows > 0) {
-    $fila = $res->fetch_assoc();
-    echo json_encode(["apellido" => $fila["apellido"]]);
-} else {
-    echo json_encode(["apellido" => null]);
+try {
+  // Cargar modelo
+  require_once dirname(__DIR__) . '/model/alumno.php';
+
+  // Consultar alumno
+  $alumnoModel = new Alumno();
+  $resultado = $alumnoModel->get_alumno($carnet);
+
+  if (!$resultado || $resultado->num_rows === 0) {
+    echo json_encode([
+      'success' => false,
+      'message' => 'Carnet no encontrado',
+      'apellido' => null
+    ]);
+    exit;
+  }
+
+  // Obtener datos
+  $fila = $resultado->fetch_assoc();
+  $apellido = $fila['apellido'] ?? 'Desconocido';
+
+  // Respuesta exitosa
+  echo json_encode([
+    'success' => true,
+    'apellido' => $apellido,
+    'carnet' => $carnet
+  ]);
+} catch (Exception $e) {
+  echo json_encode([
+    'success' => false,
+    'message' => 'Error en el servidor: ' . $e->getMessage(),
+    'apellido' => null
+  ]);
 }

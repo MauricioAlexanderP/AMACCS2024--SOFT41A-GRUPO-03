@@ -1,9 +1,21 @@
 <?php
-session_start();
-header('Content-Type: application/json');
+// Limpiar buffer de salida
+if (ob_get_level()) ob_end_clean();
+ob_start();
 
+// Iniciar sesión solo si no está activa
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
+
+// Configurar headers JSON
+header('Content-Type: application/json');
+header('Cache-Control: no-cache, must-revalidate');
+
+// Configuración de errores (sin mostrar en pantalla)
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);  // ⬅️ Cambio importante: no mostrar errores en output
+ini_set('log_errors', 1);      // ⬅️ Registrar errores en log
 
 // Importar PHPMailer
 use PHPMailer\PHPMailer\PHPMailer;
