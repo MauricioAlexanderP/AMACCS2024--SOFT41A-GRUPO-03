@@ -499,7 +499,7 @@ $estados = $detalle->obtenerTodosLosEstados();
 
             // Ejecutar al cargar y cada minuto para mantener sincronizado con el reloj del cliente
             actualizarEstadoEnClase();
-            setInterval(actualizarEstadoEnClase, 15 * 1000);
+            setInterval(actualizarEstadoEnClase, 5 * 1000);
 
             // Consolidated submit handler: validates student, sends request, triggers speech and feedback
             document.getElementById('formConsulta').addEventListener('submit', async function(e) {
