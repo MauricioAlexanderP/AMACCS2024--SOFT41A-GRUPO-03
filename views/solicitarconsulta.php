@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 
 error_reporting(E_ALL);
@@ -337,10 +337,6 @@ $estados = $detalle->obtenerTodosLosEstados();
     </div>
 </div>
 
-        .docente-body {
-            padding: 1rem 1.2rem;
-            text-align: center;
-        }
 <script>
 // Función para mostrar información importante
 function mostrarInformacion() {
@@ -489,105 +485,53 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        .docente-nombre {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
+<script>
+async function cargarDocentes() {
+    try {
+        const response = await fetch('../config/detalles.json');
+        const datos = await response.json();
+
+        const select = $('#docenteSelect');
+        select.empty();
+
+        if (!Array.isArray(datos) || datos.length === 0) {
+            select.append('<option value="">No hay docentes disponibles</option>');
+            return;
         }
 
-        .docente-area {
-            font-size: 0.95rem;
-            color: #6c757d;
-            margin-bottom: 0.5rem;
+        const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+        const hoy = dias[new Date().getDay()];
+
+        const docentesPorNombre = {};
+        datos.forEach(d => {
+            const nombre = `${d.nombre_docente} ${d.apellido_docente}`.trim();
+            if (!docentesPorNombre[nombre]) docentesPorNombre[nombre] = [];
+            docentesPorNombre[nombre].push(d);
+        });
+
+        const disponiblesHoy = Object.entries(docentesPorNombre)
+            .filter(([nombre, clases]) =>
+                !clases.some(c => (c.dia || '').toLowerCase() === hoy)
+            )
+            .map(([nombre]) => nombre);
+
+        if (disponiblesHoy.length === 0) {
+            select.append('<option value="">No hay docentes disponibles hoy</option>');
+        } else {
+            select.append('<option value="">Seleccione un docente...</option>');
+            disponiblesHoy.forEach(nombre => {
+                select.append(`<option value="${nombre}">${nombre}</option>`);
+            });
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
+        select.select2({
+            placeholder: "Seleccione un docente...",
+            width: '100%'
+        });
 
-        .status-green {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-yellow {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-red {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="header">
-        <h1>Kiosko - Solicitud de Consulta</h1>
-        <img src="../img/logo.png" alt="Logo" style="height:40px;">
-    </div>
-
-    <!-- Cards de docentes (similar a verDisponibilidad) -->
-    <?php
-    $jsonPath = __DIR__ . '/../config/detalles.json';
-    $cardsHtml = '';
-    if (file_exists($jsonPath)) {
-        $jsonContent = file_get_contents($jsonPath);
-        $detalles = json_decode($jsonContent, true);
-        if (is_array($detalles) && count($detalles) > 0) {
-            // Agrupar por docente
-            $docentes = [];
-            foreach ($detalles as $d) {
-                $nombre = trim(($d['nombre_docente'] ?? '') . ' ' . ($d['apellido_docente'] ?? ''));
-                if ($nombre === '') continue;
-                if (!isset($docentes[$nombre])) $docentes[$nombre] = [];
-                $docentes[$nombre][] = $d;
-            }
-
-            $cardsHtml .= '<div class="container py-4">';
-            $cardsHtml .= '<h3 class="mb-4 text-center">Docentes disponibles</h3>';
-            $cardsHtml .= '<div class="row justify-content-center g-4">';
-            $rnd = 1;
-            foreach ($docentes as $nombre => $list) {
-                $prim = $list[0];
-                $estado = $prim['estado_disponibilidad'] ?? ($prim['estado'] ?? 'disponible');
-                $aula = $prim['aula'] ?? '';
-                $estadoCls = 'status-green';
-                $estadoLabel = 'Disponible';
-                if ($estado === 'ocupado') {
-                    $estadoCls = 'status-red';
-                    $estadoLabel = 'Atendiendo estudiante';
-                }
-                if ($estado === 'revisando' || $estado === 'reunion' || $estado === 'laboratorio') {
-                    $estadoCls = 'status-yellow';
-                    $estadoLabel = ucfirst($estado);
-                }
-
-                $cardsHtml .= '<div class="col-md-4 col-sm-6">';
-                $cardsHtml .= '<div class="docente-card">';
-                $cardsHtml .= '<img src="https://picsum.photos/400/200?random=' . $rnd . '" alt="Docente" class="docente-img">';
-                $cardsHtml .= '<div class="docente-body">';
-                $cardsHtml .= '<p class="docente-nombre">' . htmlspecialchars($nombre) . '</p>';
-
-                $cardsHtml .= '<span class="status-badge ' . $estadoCls . '" data-docente="' . htmlspecialchars($nombre) . '">' . $estadoLabel . '</span>';
-                $cardsHtml .= '<div class="mt-3">';
-                if (strtolower($estado) === 'disponible') {
-                    $cardsHtml .= '<button class="btn btn-primary btn-solicitar" data-docente="' . htmlspecialchars($nombre) . '" data-estado="' . htmlspecialchars($estado) . '" data-bs-toggle="modal" data-bs-target="#solicitarModal">Solicitar</button>';
-                } else {
-                    // Mostrar botón no habilitado cuando el docente no está disponible
-                    $cardsHtml .= '<button class="btn btn-secondary" disabled data-docente="' . htmlspecialchars($nombre) . '" data-estado="' . htmlspecialchars($estado) . '">No disponible</button>';
-                }
-                $cardsHtml .= '</div></div></div></div>';
-                $rnd++;
-            }
-            $cardsHtml .= '</div></div>';
-        }
+    } catch (error) {
+        console.error('Error cargando JSON:', error);
+        $('#docenteSelect').html('<option value="">Error al cargar docentes</option>');
     }
 }
 
