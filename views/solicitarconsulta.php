@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 error_reporting(E_ALL);
@@ -13,6 +13,7 @@ $estados = $detalle->obtenerTodosLosEstados();
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -279,9 +280,9 @@ $estados = $detalle->obtenerTodosLosEstados();
                 align-self: flex-end;
             }
         }
-    }
-</style>
+    </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -600,14 +601,6 @@ $estados = $detalle->obtenerTodosLosEstados();
         document.addEventListener('DOMContentLoaded', cargarDocentes);
     </script>
 
-    } catch (error) {
-        console.error('Error cargando JSON:', error);
-        $('#docenteSelect').html('<option value="">Error al cargar docentes</option>');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', cargarDocentes);
-</script>
-
 </body>
+
 </html>
