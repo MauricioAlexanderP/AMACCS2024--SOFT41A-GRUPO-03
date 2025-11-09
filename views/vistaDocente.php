@@ -24,7 +24,7 @@ function generarVistasDocentes() {
     
     // Generar HTML
     $html = '<div class="container py-5">';
-    $html .= '<h3 class="mb-4 text-center">Disponibilidad de Docentes</h3>';
+    $html .= '<h3 class="mb-4 text-center">Administración de Docentes</h3>';
     $html .= '<br>';
     $html .= '<div class="d-flex justify-content-between align-items-center mb-4">';
     $html .= '<a href="logout.php" class="btn btn-danger">Cerrar Sesión</a>';
@@ -161,9 +161,8 @@ function generarModalEditar($nombreCompleto, $detalles, $id) {
     $html .= '<select class="form-select" id="estado' . $id . '" name="estado" required>';
     $html .= '<option value="disponible" selected>Disponible</option>';
     $html .= '<option value="ocupado">En Clases</option>';
-    $html .= '<option value="revisando">Disponible</option>';
     $html .= '<option value="reunion">En reunión</option>';
-    $html .= '<option value="laboratorio">Ausente</option>';
+    $html .= '<option value="Ausente">Ausente</option>';
     $html .= '</select>';
     $html .= '</div>';
     $html .= '<div class="d-flex justify-content-end gap-2">';
@@ -367,7 +366,7 @@ echo generarVistasDocentes();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Disponibilidad de Docentes</title>
+  <title>Administrar Docentes</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -569,10 +568,12 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   const rango = obtenerRangoHora(horaActual);
-  if (!rango) return; // Fuera del horario lectivo
+  // Si no hay un rango (fuera horario lectivo) no haremos la comprobación por filas,
+  // pero seguiremos con la comprobación basada en config/detalles.json.
 
-  // Recorre cada docente
-  document.querySelectorAll(".docente-card").forEach(card => {
+  // Recorre cada docente (solo si estamos en un rango horario definido)
+  if (rango) {
+    document.querySelectorAll(".docente-card").forEach(card => {
     const modalId = card.querySelector(".btn-horario").getAttribute("data-bs-target");
     const tabla = document.querySelector(`${modalId} table`);
     const filas = tabla.querySelectorAll("tbody tr");
@@ -592,15 +593,73 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
 
-    const estado = card.querySelector(".status-badge");
-    if (estaOcupado) {
-      estado.textContent = "En clase";
-      estado.className = "status-badge status-red";
-    } else {
-      estado.textContent = "Disponible";
-      estado.className = "status-badge status-green";
-    }
-  });
+      const estado = card.querySelector(".status-badge");
+      if (estaOcupado) {
+        estado.textContent = "En clase";
+        estado.className = "status-badge status-red";
+      } else {
+        estado.textContent = "Disponible";
+        estado.className = "status-badge status-green";
+      }
+    });
+  }
+
+  // Además, sincronizar con config/detalles.json para bloquear/mostrar "En clase" según hora del navegador
+  async function actualizarEstadoEnClase_vistaDocente(){
+    try{
+      const resp = await fetch('../config/detalles.json');
+      if(!resp.ok) return;
+      const datos = await resp.json();
+      if(!Array.isArray(datos)) return;
+      console.debug('[vistaDocente] actualizarEstadoEnClase_vistaDocente: entries', datos.length);
+
+      const normalize = s => (''+s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const dias = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
+      const ahora = new Date();
+      const hoyNorm = normalize(dias[ahora.getDay()]);
+      const ahoraMin = ahora.getHours()*60 + ahora.getMinutes();
+
+      const porDocente = {};
+      datos.forEach(d=>{
+        const nombre = `${d.nombre_docente||''} ${d.apellido_docente||''}`.trim();
+        if(!nombre) return;
+        if(!porDocente[nombre]) porDocente[nombre]=[];
+        porDocente[nombre].push(d);
+      });
+
+      Object.keys(porDocente).forEach(nombre=>{
+        const clases = porDocente[nombre];
+        const enClase = clases.some(c=>{
+          const diaNorm = normalize(c.dia||'');
+          if(diaNorm !== hoyNorm) return false;
+          const ha = (c.ha||c.hora_inicio||c.h_inicio||'')+'';
+          const hf = (c.hf||c.hora_fin||c.h_fin||'')+'';
+          const parse = t=>{ if(!t) return null; const p=t.split(':'); if(p.length<2) return null; const h=parseInt(p[0],10); const m=parseInt(p[1],10)||0; if(isNaN(h)||isNaN(m)) return null; return h*60+m; };
+          const haMin = parse(ha); const hfMin = parse(hf);
+          if(haMin===null||hfMin===null) return false;
+          if(hfMin<haMin) return false;
+          return ahoraMin>=haMin && ahoraMin<hfMin;
+        });
+
+        console.debug('[vistaDocente] docente', nombre, 'enClase', enClase);
+        // actualizar badge si existe
+        document.querySelectorAll('.docente-card').forEach(card=>{
+          const nEl = card.querySelector('.docente-nombre');
+          if(!nEl) return;
+          const normalize = s => (''+s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+          if(normalize(nEl.textContent.trim())===normalize(nombre)){
+            const badge = card.querySelector('.status-badge');
+            if(badge){
+              if(enClase){ badge.textContent='En clase'; badge.className='status-badge status-red'; }
+            }
+          }
+        });
+      });
+    }catch(e){ console.warn('actualizarEstadoEnClase_vistaDocente',e); }
+  }
+
+  actualizarEstadoEnClase_vistaDocente();
+  setInterval(actualizarEstadoEnClase_vistaDocente, 60*1000);
 });
 </script>
 

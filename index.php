@@ -204,6 +204,79 @@ document.addEventListener("DOMContentLoaded",()=>{
       card.style.display=n.includes(txt)?'':'none';
     });
   });
+
+    // Validación: deshabilitar botones o marcar tarjetas para docentes que están en clase según config/detalles.json
+    async function actualizarEstadoEnClase_index(){
+        try{
+            const resp = await fetch('./config/detalles.json');
+            if(!resp.ok) return;
+            const datos = await resp.json();
+            if(!Array.isArray(datos)) return;
+                console.debug('[index] actualizarEstadoEnClase_index: entries', datos.length);
+
+            const normalize = s => (''+s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+            const dias = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
+            const ahora = new Date();
+            const hoyNorm = normalize(dias[ahora.getDay()]);
+            const ahoraMin = ahora.getHours()*60 + ahora.getMinutes();
+
+            const porDocente = {};
+            const porDocenteNorm = {};
+            datos.forEach(d=>{
+                const nombre = `${d.nombre_docente||''} ${d.apellido_docente||''}`.trim();
+                if(!nombre) return;
+                if(!porDocente[nombre]) porDocente[nombre]=[];
+                porDocente[nombre].push(d);
+                const norm = normalize(nombre);
+                if(!porDocenteNorm[norm]) porDocenteNorm[norm]=[];
+                porDocenteNorm[norm].push(d);
+            });
+
+                    // recorrer tarjetas en index
+                    document.querySelectorAll('#listaDocentes .card').forEach(card=>{
+                        // Extraer nombre limpiando el texto del botón dentro de la tarjeta
+                        let nombre = '';
+                        try {
+                            // clonar la tarjeta y eliminar botones para obtener solo el texto del nombre
+                            const clone = card.cloneNode(true);
+                            clone.querySelectorAll('button, .btn-detalles').forEach(n=>n.remove());
+                            nombre = (clone.textContent || '').trim();
+                        } catch (e) {
+                            nombre = (card.textContent || '').split('\n')[0].trim();
+                        }
+                        if(!nombre) return;
+                        const normName = normalize(nombre);
+                        const clases = porDocenteNorm[normName] || [];
+                        const enClase = clases.some(c=>{
+                    const diaNorm = normalize(c.dia||'');
+                    if(diaNorm !== hoyNorm) return false;
+                    const parse = t=>{ if(!t) return null; const p=(t+'').split(':'); if(p.length<2) return null; const h=parseInt(p[0],10); const m=parseInt(p[1],10)||0; if(isNaN(h)||isNaN(m)) return null; return h*60+m; };
+                    const ha = parse(c.ha||c.hora_inicio||c.h_inicio||c.hora);
+                    const hf = parse(c.hf||c.hora_fin||c.h_fin||c.hora_fin);
+                    if(ha===null||hf===null) return false;
+                    if(hf<ha) return false;
+                    return ahoraMin>=ha && ahoraMin<hf;
+                });
+
+                // actualizar la tarjeta visualmente
+                        console.debug('[index] docente', nombre, 'enClase', enClase);
+                        if(enClase){
+                    card.classList.remove('blanco','amarillo');
+                    card.classList.add('rojo');
+                    // desactivar botón detalles si existe
+                    
+                } else {
+                    // restaurar si no hay otros estados
+                    const btn = card.querySelector('.btn-detalles');
+                    if(btn){ btn.disabled = false; btn.style.opacity=1; btn.textContent = 'Ver detalles'; }
+                }
+            });
+
+        }catch(e){ console.warn('actualizarEstadoEnClase_index',e); }
+    }
+
+    actualizarEstadoEnClase_index();
+    setInterval(actualizarEstadoEnClase_index,60*1000);
 });
 </script>
 </body>

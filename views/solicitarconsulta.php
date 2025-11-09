@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -24,6 +25,8 @@ $estados = $detalle->obtenerTodosLosEstados();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+    <!-- Icons used by vistaDocente search field -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
 
     <style>
@@ -131,67 +134,6 @@ $estados = $detalle->obtenerTodosLosEstados();
             padding: 1rem 1.2rem;
             text-align: center;
         }
-<script>
-document.getElementById('formConsulta').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const carnet = document.getElementById('carnet').value.trim();
-    const materia = document.getElementById('materia').value.trim();
-    const descripcion = document.getElementById('descripcion').value.trim();
-    const docente = document.getElementById('docenteSelect').value;
-
-    if (!carnet || !materia || !descripcion || !docente) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Campos incompletos',
-            text: 'Por favor complete todos los campos antes de enviar.'
-        });
-        return;
-    }
-
- 
-    const resp = await fetch('../controller/buscarAlumno.php?carnet=' + carnet);
-    const data = await resp.json();
-
-    if (!data.apellido) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Carnet inválido',
-            text: 'No existe un alumno con ese carnet.'
-        });
-        return;
-    }
-
-    const apellido = data.apellido;
-    const docenteNombre = docente;
-
-  
-    const mensaje = new SpeechSynthesisUtterance(
-        `Estudiante ${apellido} solicita al docente ${docenteNombre}.`
-    );
-    mensaje.lang = "es-ES";
-    speechSynthesis.speak(mensaje);
-
-   
-    Swal.fire({
-        icon: 'success',
-        title: 'Solicitud enviada',
-        text: `Estudiante ${apellido} ha solicitado al docente ${docenteNombre}.`,
-        confirmButtonColor: '#1976D2'
-    });
-
-  
-    this.reset();
-    $('#docenteSelect').val(null).trigger('change');
-});
-</script>
-
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
         .docente-nombre {
             font-size: 1.1rem;
             font-weight: 600;
@@ -227,6 +169,13 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
             color: #721c24;
         }
     </style>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
@@ -236,6 +185,15 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
         <img src="../img/logo.png" alt="Logo" style="height:40px;">
     </div>
 
+    <!-- Campo de búsqueda similar a vistaDocente -->
+    <div class="d-flex justify-content-end mb-3">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="buscarDocente" placeholder="Buscar docente...">
+            </div>
+        </div>
+    </div>
     <!-- Cards de docentes (similar a verDisponibilidad) -->
     <?php
     $jsonPath = __DIR__ . '/../config/detalles.json';
@@ -255,7 +213,7 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
 
             $cardsHtml .= '<div class="container py-4">';
             $cardsHtml .= '<h3 class="mb-4 text-center">Docentes disponibles</h3>';
-            $cardsHtml .= '<div class="row justify-content-center g-4">';
+                $cardsHtml .= '<div class="row justify-content-center g-4" id="listaDocentes">';
             $rnd = 1;
             foreach ($docentes as $nombre => $list) {
                 $prim = $list[0];
@@ -333,6 +291,7 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        
         async function cargarDocentes() {
             try {
                 const response = await fetch('../config/detalles.json');
@@ -389,6 +348,54 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
         document.addEventListener('DOMContentLoaded', function() {
             cargarDocentes();
 
+            // Información importante (botón)
+            const infoBtn = document.getElementById('infoBtn');
+            if (infoBtn) {
+                infoBtn.addEventListener('click', function mostrarInformacion() {
+                    Swal.fire({
+                        title: 'Información Importante',
+                        html: `
+            <div style="text-align: left;">
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <i class="fas fa-clock" style="color: #1976D2; font-size: 18px; margin-top: 3px;"></i>
+                    <div>
+                        <h3 style="margin: 0 0 5px; font-size: 16px;">Horarios de atención</h3>
+                        <p style="margin: 0; color: #6c757d; font-size: 14px;">Las consultas se realizan durante el horario de clases de cada docente. Verifique la disponibilidad antes de solicitar.</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <i class="fas fa-user-check" style="color: #1976D2; font-size: 18px; margin-top: 3px;"></i>
+                    <div>
+                        <h3 style="margin: 0 0 5px; font-size: 16px;">Docentes disponibles</h3>
+                        <p style="margin: 0; color: #6c757d; font-size: 14px;">Solo se muestran los docentes que no tienen clases en este momento. La lista se actualiza automáticamente.</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <i class="fas fa-bell" style="color: #1976D2; font-size: 18px; margin-top: 3px;"></i>
+                    <div>
+                        <h3 style="margin: 0 0 5px; font-size: 16px;">Notificación automática</h3>
+                        <p style="margin: 0; color: #6c757d; font-size: 14px;">Al enviar su solicitud, el docente será notificado mediante <strong>correo electrónico</strong> y <strong>mensaje de voz</strong> para atenderlo lo antes posible.</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="fas fa-exclamation-triangle" style="color: #1976D2; font-size: 18px; margin-top: 3px;"></i>
+                    <div>
+                        <h3 style="margin: 0 0 5px; font-size: 16px;">Datos correctos</h3>
+                        <p style="margin: 0; color: #6c757d; font-size: 14px;">Asegúrese de ingresar correctamente su carnet y los detalles de la consulta para una atención eficiente.</p>
+                    </div>
+                </div>
+            </div>
+        `,
+                        width: '600px',
+                        confirmButtonColor: '#1976D2',
+                        confirmButtonText: 'Entendido'
+                    });
+                });
+            }
+
             // Cuando se hace click en Solicitar, prefijar el docente en el formulario modal
             document.querySelectorAll('.btn-solicitar').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -400,151 +407,302 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
                 });
             });
 
+            // Funciones para detectar si un docente está en clase ahora y deshabilitar su botón
+            function parseTimeToMinutes(t) {
+                if (!t) return null;
+                const parts = ('' + t).trim().split(':');
+                if (parts.length < 2) return null;
+                const h = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10) || 0;
+                if (Number.isNaN(h) || Number.isNaN(m)) return null;
+                return h * 60 + m;
+            }
+
+            async function actualizarEstadoEnClase() {
+                try {
+                    const resp = await fetch('../config/detalles.json');
+                    if (!resp.ok) return;
+                    const datos = await resp.json();
+                    if (!Array.isArray(datos)) return;
+
+                    const dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+                    const ahora = new Date();
+                    const hoyRaw = dias[ahora.getDay()];
+                    const hoy = ('' + hoyRaw).toLowerCase();
+                    // normalize (remove accents) helper
+                    const normalize = s => ('' + s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const hoyNorm = normalize(hoy);
+                    const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes();
+
+                    // Agrupar por docente
+                    const porDocente = {};
+                    datos.forEach(d => {
+                        const nombre = `${d.nombre_docente || ''} ${d.apellido_docente || ''}`.trim();
+                        if (!nombre) return;
+                        if (!porDocente[nombre]) porDocente[nombre] = [];
+                        porDocente[nombre].push(d);
+                    });
+
+                    Object.keys(porDocente).forEach(nombre => {
+                        const clases = porDocente[nombre];
+                        const enClase = clases.some(c => {
+                            const diaRaw = (c.dia || '') + '';
+                            const diaNorm = normalize(diaRaw);
+                            if (diaNorm !== hoyNorm) return false;
+                            const ha = parseTimeToMinutes(c.ha || c.hora_inicio || c.h_inicio || c.hora || c.h_inicio_raw);
+                            const hf = parseTimeToMinutes(c.hf || c.hora_fin || c.h_fin || c.hora_fin_raw);
+                            if (ha === null || hf === null) return false;
+                            if (hf < ha) return false;
+                            return ahoraMin >= ha && ahoraMin < hf;
+                        });
+
+                        console.debug('[actualizarEstadoEnClase] docente:', nombre, 'enClase:', enClase);
+
+                        // Actualizar botones/badges en DOM (comparación normalizada de nombres)
+                        const normalizeName = s => (''+s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+                        document.querySelectorAll('.btn-solicitar[data-docente]').forEach(btn => {
+                            if (normalizeName(btn.getAttribute('data-docente') || '') === normalizeName(nombre)) {
+                                if (enClase) {
+                                    btn.disabled = true;
+                                    btn.classList.remove('btn-primary');
+                                    btn.classList.add('btn-secondary');
+                                    btn.setAttribute('data-estado', 'en_clase');
+                                } else {
+                                    // only enable if it wasn't explicitly non-available (e.g., ocupado via SSE)
+                                    const current = (btn.getAttribute('data-estado') || '').toLowerCase();
+                                    if (!current || current === 'disponible' || current === 'en_clase') {
+                                        btn.disabled = false;
+                                        btn.classList.remove('btn-secondary');
+                                        btn.classList.add('btn-primary');
+                                        btn.setAttribute('data-estado', 'disponible');
+                                    }
+                                }
+                            }
+                        });
+
+                        // actualizar badge si existe
+                        document.querySelectorAll('.status-badge').forEach(b => {
+                            if (normalizeName(b.getAttribute('data-docente') || '') === normalizeName(nombre)) {
+                                if (enClase) {
+                                    b.textContent = 'En clase';
+                                    b.className = 'status-badge status-yellow';
+                                } else {
+                                    // no cambiar si badge muestra otro estado gestionado por SSE
+                                }
+                            }
+                        });
+                    });
+                } catch (err) {
+                    console.warn('No se pudo actualizar estado en clase:', err);
+                }
+            }
+
+            // Ejecutar al cargar y cada minuto para mantener sincronizado con el reloj del cliente
+            actualizarEstadoEnClase();
+            setInterval(actualizarEstadoEnClase, 5 * 1000);
+
+            // Consolidated submit handler: validates student, sends request, triggers speech and feedback
             document.getElementById('formConsulta').addEventListener('submit', async function(e) {
                 e.preventDefault();
 
-                // Validar campos
-                const carnet = document.getElementById('carnet').value.trim();
-                const materia = document.getElementById('materia').value.trim();
-                const descripcion = document.getElementById('descripcion').value.trim();
-                const docente = (document.getElementById('docenteInput') && document.getElementById('docenteInput').value) || (document.getElementById('docenteSelect') && document.getElementById('docenteSelect').value) || '';
+                const form = this;
+                const carnet = (form.querySelector('#carnet') && form.querySelector('#carnet').value.trim()) || '';
+                const materia = (form.querySelector('#materia') && form.querySelector('#materia').value.trim()) || '';
+                const descripcion = (form.querySelector('#descripcion') && form.querySelector('#descripcion').value.trim()) || '';
+                const docente = (form.querySelector('#docenteInput') && form.querySelector('#docenteInput').value) || (form.querySelector('#docenteSelect') && form.querySelector('#docenteSelect').value) || '';
+                const submitBtn = form.querySelector('button[type="submit"]') || document.getElementById('submitBtn');
 
                 if (!carnet || !materia || !descripcion || !docente) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Campos incompletos',
-                        text: 'Por favor complete todos los campos antes de enviar.'
+                        text: 'Por favor complete todos los campos antes de enviar.',
+                        confirmButtonColor: '#1976D2'
                     });
                     return;
                 }
 
-                // Mostrar indicador de carga
-                Swal.fire({
-                    title: 'Enviando solicitud...',
-                    text: 'Por favor espere',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
+                // Cambiar el texto del botón y mostrar indicador de carga
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<div class="loading"></div> Procesando...';
+                    submitBtn.disabled = true;
+                }
 
                 try {
-                    // Enviar datos al servidor mediante AJAX
+                    const buscarUrl = '../controller/buscarAlumno.php?carnet=' + encodeURIComponent(carnet);
+                    const resp = await fetch(buscarUrl);
+
+                    if (!resp.ok) {
+                        throw new Error(`HTTP error! status: ${resp.status}`);
+                    }
+
+                    const responseText = await resp.text();
+                    console.log('Respuesta buscarAlumno:', responseText);
+
+                    let data;
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (parseError) {
+                        console.error('❌ Error al parsear JSON de buscarAlumno:', parseError);
+                        console.error('❌ Texto de respuesta:', responseText);
+                        throw new Error('Respuesta del servidor no es JSON válido');
+                    }
+
+                    if (!data.apellido) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Carnet inválido',
+                            text: 'No existe un alumno con ese carnet.',
+                            confirmButtonColor: '#1976D2'
+                        });
+
+                        // Restaurar el botón
+                        if (submitBtn) {
+                            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Solicitud';
+                            submitBtn.disabled = false;
+                        }
+                        return;
+                    }
+
+                    const apellido = data.apellido;
+                    const docenteNombre = docente;
+
+                    // Enviar petición al controlador que envía el correo
                     const formData = new FormData();
                     formData.append('carnet', carnet);
                     formData.append('materia', materia);
                     formData.append('descripcion', descripcion);
-                    formData.append('docente', docente);
+                    formData.append('docente', docenteNombre);
 
-                    console.log('Enviando datos:', {
-                        carnet,
-                        materia,
-                        descripcion,
-                        docente
-                    });
+                    console.log('Enviando correo automático...');
 
-                    const response = await fetch('../controller/solicitarConsulta.php', {
-                        method: 'POST',
-                        body: formData
-                    });
+                    try {
+                        const emailResponse = await fetch('../controller/solicitarConsulta.php', {
+                            method: 'POST',
+                            body: formData
+                        });
 
-                    console.log('Response status:', response.status);
-                    console.log('Response headers:', response.headers);
-
-                    // Verificar si la respuesta es JSON
-                    const contentType = response.headers.get('content-type');
-                    if (!contentType || !contentType.includes('application/json')) {
-                        const text = await response.text();
-                        console.error('Respuesta no es JSON:', text);
-                        throw new Error('El servidor no devolvió una respuesta JSON válida. Respuesta: ' + text.substring(0, 200));
-                    }
-
-                    const result = await response.json();
-                    console.log('Response data:', result);
-
-                    if (result.success) {
-                        // Verificar si es modo mailto
-                        if (result.data && result.data.mode === 'MAILTO' && result.data.mailto_link) {
-                            // Abrir enlace mailto
-                            window.location.href = result.data.mailto_link;
-
-                            // Mostrar mensaje de confirmación
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Abriendo cliente de correo',
-                                html: `
-                                    <p>${result.message}</p>
-                                    <hr>
-                                    <p><small>Si no se abrió automáticamente, 
-                                    <a href="${result.data.mailto_link}" target="_blank">haz clic aquí</a></small></p>
-                                `,
-                                confirmButtonColor: '#1976D2',
-                                showCancelButton: true,
-                                confirmButtonText: 'Entendido',
-                                cancelButtonText: 'Abrir correo manualmente'
-                            }).then((btn) => {
-                                if (btn.isDismissed && btn.dismiss === 'cancel') {
-                                    window.open(result.data.mailto_link, '_blank');
-                                }
-                            });
-                        } else {
-                            // Modo normal (smtp o test)
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Solicitud enviada',
-                                text: result.message,
-                                confirmButtonColor: '#1976D2'
-                            });
+                        if (!emailResponse.ok) {
+                            throw new Error(`HTTP error! status: ${emailResponse.status}`);
                         }
 
-                        // Cerrar modal
+                        const responseText2 = await emailResponse.text();
+                        console.log('Respuesta del servidor:', responseText2);
+
+                        let emailResult;
                         try {
-                            const modalEl = document.getElementById('solicitarModal');
-                            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                            modal.hide();
-                        } catch (e) {}
+                            emailResult = JSON.parse(responseText2);
+                        } catch (parseError) {
+                            console.warn('Respuesta no JSON en enviar correo, texto:', responseText2);
+                            emailResult = { success: false, message: responseText2 };
+                        }
 
-                        // Limpia formulario
-                        document.getElementById('formConsulta').reset();
-                    } else {
-                        // Mostrar error
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            html: `<p>${result.message || 'Hubo un error al enviar la solicitud.'}</p>
-                                   ${result.error ? `<p><small><strong>Detalle:</strong> ${result.error}</small></p>` : ''}
-                                   ${result.type ? `<p><small><strong>Tipo:</strong> ${result.type}</small></p>` : ''}`,
-                            confirmButtonColor: '#1976D2'
-                        });
-                    }
-                } catch (error) {
-                    console.error('Error completo:', error);
-                    console.error('Stack:', error.stack);
-
-                    let errorMessage = 'No se pudo conectar con el servidor. ';
-
-                    if (error.message.includes('JSON')) {
-                        errorMessage += 'El servidor no está respondiendo correctamente. Verifique que el archivo controller/solicitarConsulta.php existe y no tiene errores de sintaxis.';
-                    } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
-                        errorMessage += 'Verifique que el servidor XAMPP esté ejecutándose y que la ruta sea correcta.';
-                    } else {
-                        errorMessage += error.message;
+                        if (emailResult.success) {
+                            console.log('✅ Correo enviado exitosamente');
+                        } else {
+                            console.warn('❌ Error al enviar correo:', emailResult.message);
+                        }
+                    } catch (emailError) {
+                        console.error('❌ Error en el envío de correo:', emailError);
+                        // continuar con la voz aunque falle el correo
                     }
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        html: `<p>${errorMessage}</p>
-                               <hr>
-                               <p><small><strong>Ruta:</strong> ../controller/solicitarConsulta.php</small></p>
-                               <p><small><strong>Error técnico:</strong> ${error.message}</small></p>
-                               <p><small>Presiona F12 y revisa la consola para más detalles</small></p>`,
+                    // Mensaje de voz (si está disponible)
+                    if ('speechSynthesis' in window) {
+                        const repeticiones = 3;
+                        const intervalo = 5000; // 5 segundos
+                        for (let i = 0; i < repeticiones; i++) {
+                            setTimeout(() => {
+                                try {
+                                    const mensaje = new SpeechSynthesisUtterance(`Estudiante ${apellido} solicita al docente ${docenteNombre}.`);
+                                    mensaje.lang = 'es-ES';
+                                    mensaje.rate = 0.9;
+                                    mensaje.volume = 1.0;
+                                    speechSynthesis.speak(mensaje);
+                                } catch (sErr) {
+                                    console.warn('SpeechSynthesis error', sErr);
+                                }
+                            }, 2000 + (i * intervalo));
+                        }
+                    }
+
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Solicitud enviada exitosamente',
+                        html: `
+                <div style="text-align: left; margin-top: 15px;">
+                    <p><strong>Estudiante:</strong> ${apellido} (${carnet})</p>
+                    <p><strong>Docente solicitado:</strong> ${docenteNombre}</p>
+                    <p><strong>Materia:</strong> ${materia}</p>
+                </div>
+            `,
                         confirmButtonColor: '#1976D2'
                     });
+
+                    // Reset y cierre de modal si aplica
+                    try {
+                        const modalEl = document.getElementById('solicitarModal');
+                        if (modalEl) {
+                            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modal.hide();
+                        }
+                    } catch (err) {}
+
+                    form.reset();
+                    if (window.$ && $('#docenteSelect').length) $('#docenteSelect').val(null).trigger('change');
+
+                } catch (error) {
+                    console.error('Error al procesar la solicitud:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al procesar su solicitud. Inténtelo nuevamente.',
+                        confirmButtonColor: '#1976D2'
+                    });
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Solicitud';
+                        submitBtn.disabled = false;
+                    }
                 }
             });
         });
     </script>
+
+        <!-- Script: filtrado por búsqueda en tiempo real (estructura solicitada) -->
+        <script>
+            (function() {
+                const inputBusqueda = document.getElementById('buscarDocente');
+                const listaDocentes = document.getElementById('listaDocentes');
+
+                const normalize = s => ('' + (s || '')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+                if (inputBusqueda && listaDocentes) {
+                    inputBusqueda.addEventListener('input', function(e) {
+                        const busqueda = normalize((e.target.value || '').toLowerCase().trim());
+                        // Seleccionar las columnas que contienen las tarjetas (tolerante a diferentes clases)
+                        const tarjetas = listaDocentes.querySelectorAll('.col-md-4, .col-sm-6, .docente-card');
+
+                        Array.from(tarjetas).forEach(tarjetaWrapper => {
+                            // Si la tarjeta fue pasada directamente como .docente-card, buscar el wrapper col
+                            let tarjeta = tarjetaWrapper.classList && tarjetaWrapper.classList.contains('docente-card') ? tarjetaWrapper : tarjetaWrapper.querySelector('.docente-card') || tarjetaWrapper;
+
+                            const nombreEl = tarjeta.querySelector ? tarjeta.querySelector('.docente-nombre') : null;
+                            const areaEl = tarjeta.querySelector ? tarjeta.querySelector('.docente-area') : null;
+                            const nombreDocente = nombreEl ? normalize(nombreEl.textContent || '') : '';
+                            const aula = areaEl ? normalize(areaEl.textContent || '') : '';
+
+                            if (nombreDocente.includes(busqueda) || aula.includes(busqueda)) {
+                                // mostrar el elemento columna si existe, si no mostrar la tarjeta
+                                if (tarjetaWrapper.style) tarjetaWrapper.style.display = '';
+                            } else {
+                                if (tarjetaWrapper.style) tarjetaWrapper.style.display = 'none';
+                            }
+                        });
+                    });
+                }
+            })();
+        </script>
 
     <!-- SSE client: escucha cambios en views/sse.php y actualiza badges/botones en tiempo real -->
     <script>
@@ -559,20 +717,26 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
                 es.onmessage = function(e) {
                     try {
                         const datos = JSON.parse(e.data || '{}');
+                        // helper to normalize strings (remove accents and lowercase)
+                        const normalizeName = s => ('' + (s || '')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
                         Object.keys(datos).forEach(function(nombre) {
                             const info = datos[nombre] || {};
                             const estado = (info.estado || '').toLowerCase();
-                            // actualizar badges
+                            const nombreNorm = normalizeName(nombre);
+
+                            // actualizar badges (comparación normalizada)
                             document.querySelectorAll('.status-badge').forEach(function(b) {
-                                if (b.getAttribute('data-docente') === nombre) {
+                                if (normalizeName(b.getAttribute('data-docente')) === nombreNorm) {
                                     const label = (estado === 'ocupado') ? 'Atendiendo estudiante' : (estado === 'disponible' ? 'Disponible' : (estado ? estado.charAt(0).toUpperCase() + estado.slice(1) : 'Desconocido'));
                                     b.textContent = label;
                                     b.className = 'status-badge ' + (classMap[estado] || 'status-yellow');
                                 }
                             });
-                            // actualizar botones
+
+                            // actualizar botones (comparación normalizada)
                             document.querySelectorAll('button[data-docente]').forEach(function(btn) {
-                                if (btn.getAttribute('data-docente') === nombre) {
+                                if (normalizeName(btn.getAttribute('data-docente')) === nombreNorm) {
                                     if (estado === 'disponible') {
                                         btn.disabled = false;
                                         btn.classList.remove('btn-secondary');
@@ -587,6 +751,17 @@ document.getElementById('formConsulta').addEventListener('submit', async functio
                                 }
                             });
                         });
+
+                        // Después de aplicar los cambios que vienen por SSE, re-evaluar quién está "En clase"
+                        // para que la lógica de horarios tenga prioridad sobre la disponibilidad editada.
+                        try {
+                            // give DOM a tiny moment to settle
+                            setTimeout(() => {
+                                if (typeof actualizarEstadoEnClase === 'function') actualizarEstadoEnClase();
+                            }, 50);
+                        } catch (e2) {
+                            console.warn('No se pudo re-ejecutar actualizarEstadoEnClase tras SSE', e2);
+                        }
                     } catch (err) {
                         console.error('SSE JSON parse error', err);
                     }
